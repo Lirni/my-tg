@@ -32,34 +32,33 @@
 
     <button onclick="location.reload()" style="width: 100%; padding: 10px; background: #444; color: white; border: none; border-radius: 8px;">Обновить страницу</button>
 
-    <script>
-        const tg = window.Telegram.WebApp;
+    <<script>
+    const tg = window.Telegram.WebApp;
+    tg.ready();
+    tg.expand();
+
+    function debug() {
+        const hash = window.location.hash;
+        const log = document.getElementById('hash-log');
+        const userLog = document.getElementById('user-log');
         
-        function runDiagnostics() {
-            tg.ready();
-            tg.expand();
+        log.innerText = hash || "Hash ПУСТО";
 
-            const hashBox = document.getElementById('hash-log');
-            const userBox = document.getElementById('user-log');
-            const statusBox = document.getElementById('status');
-
-            // 1. Проверяем Hash (тут лежат данные до того, как скрипт ТГ их превратит в объект)
-            const currentHash = window.location.hash;
-            hashBox.innerText = currentHash || "ПУСТО (Данные не пришли в URL)";
-
-            // 2. Проверяем готовый объект
-            const userData = tg.initDataUnsafe?.user;
-            if (userData) {
-                userBox.innerText = JSON.stringify(userData, null, 2);
-                statusBox.innerHTML = '<span class="success">✅ ДАННЫЕ ПОЛУЧЕНЫ!</span>';
-            } else {
-                userBox.innerText = "ОБЪЕКТ USER ПУСТ";
-                statusBox.innerHTML = '<span class="error">❌ ДАННЫЕ НЕ НАЙДЕНЫ</span>';
+        // Попробуем достать данные из initData (это строка)
+        if (tg.initData) {
+            userLog.innerText = "initData есть!\n" + tg.initData;
+            
+            // Если есть initData, значит данные точно внутри.
+            // ТГ иногда не распаковывает их в initDataUnsafe сразу.
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
+                document.getElementById('status').innerHTML = "✅ ПОБЕДА! Юзер: " + tg.initDataUnsafe.user.first_name;
             }
+        } else {
+            userLog.innerText = "initData ПУСТО. ТГ не передал параметры.";
         }
+    }
 
-        // Запуск через 300мс
-        setTimeout(runDiagnostics, 300);
-    </script>
+    setTimeout(debug, 500);
+</script>
 </body>
 </html>
