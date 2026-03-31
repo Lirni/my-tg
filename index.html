@@ -3,92 +3,161 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Prime Era - Cardinal</title>
+    <title>Cardinal Store Premium</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --bg: #1a232e;
-            --card: #242f3d;
-            --accent: #40b37e;
-            --text: #ffffff;
-            --hint: #8aa1b1;
+            --bg: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.7);
+            --accent: #10b981; /* Изумрудный */
+            --accent-glow: rgba(16, 185, 129, 0.3);
+            --text: #f8fafc;
+            --hint: #94a3b8;
         }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
         body {
-            font-family: -apple-system, sans-serif;
-            background: var(--bg);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
             color: var(--text);
             margin: 0; padding: 20px;
-            display: flex; flex-direction: column; align-items: center;
+            overflow-x: hidden;
+            min-height: 100vh;
         }
-        /* Навигация */
+
+        /* Анимация появления */
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .animate-in { animation: fadeInUp 0.6s ease out forwards; }
+
+        /* Навигация (Pill style) */
         .nav {
-            display: flex; width: 100%; justify-content: space-around;
-            background: var(--card); border-radius: 12px; margin-bottom: 20px;
+            display: flex; background: var(--card-bg);
+            padding: 5px; border-radius: 16px;
+            margin-bottom: 25px; backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.1);
         }
         .nav-item {
-            padding: 12px; cursor: pointer; color: var(--hint); font-weight: bold;
+            flex: 1; text-align: center; padding: 12px;
+            border-radius: 12px; cursor: pointer;
+            transition: all 0.3s ease; font-weight: 600;
+            color: var(--hint);
         }
-        .nav-item.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+        .nav-item.active {
+            background: var(--accent); color: white;
+            box-shadow: 0 4px 15px var(--accent-glow);
+        }
 
         /* Карточки */
         .card {
-            background: var(--card); width: 100%; padding: 20px;
-            border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            box-sizing: border-box; text-align: center; margin-bottom: 15px;
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border-radius: 24px;
+            padding: 24px;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 20px;
+            transition: transform 0.2s ease;
         }
-        .avatar {
-            width: 80px; height: 80px; background: var(--accent);
-            border-radius: 50%; margin: 0 auto 15px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 32px; font-weight: bold; overflow: hidden;
-        }
-        .avatar img { width: 100%; height: 100%; object-fit: cover; }
 
+        .welcome-card {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(30, 41, 59, 0.7) 100%);
+            text-align: left;
+        }
+
+        h1, h2, h3 { margin: 0; }
+        .price { font-size: 32px; color: var(--accent); margin: 15px 0; font-weight: 800; }
+
+        /* Кнопки */
         button {
-            background: var(--accent); color: white; border: none;
-            padding: 15px; border-radius: 12px; width: 100%;
-            font-size: 16px; font-weight: bold; cursor: pointer;
+            background: var(--accent);
+            color: white; border: none;
+            padding: 16px; border-radius: 16px;
+            width: 100%; font-size: 16px; font-weight: 700;
+            cursor: pointer; transition: all 0.2s ease;
+            box-shadow: 0 4px 20px var(--accent-glow);
         }
-        .info-row {
+        button:active { transform: scale(0.96); opacity: 0.9; }
+
+        /* Профиль */
+        .avatar-container {
+            width: 90px; height: 90px; margin: 0 auto 15px;
+            border-radius: 30px; background: linear-gradient(45deg, var(--accent), #34d399);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 36px; font-weight: bold;
+            box-shadow: 0 8px 25px var(--accent-glow);
+            overflow: hidden;
+        }
+        .avatar-container img { width: 100%; height: 100%; object-fit: cover; }
+
+        .info-list { margin-top: 20px; text-align: left; }
+        .info-item {
             display: flex; justify-content: space-between;
-            margin: 12px 0; border-bottom: 1px solid #333; padding-bottom: 5px;
-            font-size: 14px;
+            padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-        .info-row span:first-child { color: var(--hint); }
-        #profile-page { display: none; }
+        .info-label { color: var(--hint); font-size: 14px; }
+        .info-value { font-weight: 500; font-size: 14px; }
+
+        /* Переключатель страниц */
+        .page { display: none; }
+        .page.active { display: block; animation: fadeInUp 0.4s ease forwards; }
+
     </style>
 </head>
 <body>
 
-    <div class="nav">
-        <div id="tab-shop" class="nav-item active">🛒 Магазин</div>
-        <div id="tab-profile" class="nav-item">👤 Профиль</div>
+    <!-- Навигация -->
+    <div class="nav animate-in">
+        <div id="tab-shop" class="nav-item active" onclick="showPage('shop')">Магазин</div>
+        <div id="tab-profile" class="nav-item" onclick="showPage('profile')">Профиль</div>
     </div>
 
-    <!-- СТРАНИЦА МАГАЗИНА -->
-    <div id="shop-page" style="width: 100%;">
-        <div class="card">
-            <h2 id="welcome-name">Привет!</h2>
-            <p style="color: var(--hint);">Добро пожаловать в Cardinal Store</p>
+    <!-- Страница Магазина -->
+    <div id="shop-page" class="page active">
+        <div class="card welcome-card animate-in">
+            <h3 id="user-greeting">Привет, Пользователь!</h3>
+            <p style="color: var(--hint); font-size: 14px; margin-top: 5px;">Твой личный кабинет Cardinal Store</p>
         </div>
-        <div class="card">
-            <h3>Cardinal Extension</h3>
-            <p style="color: var(--hint);">v2.1 • Автоматизация</p>
-            <h1 style="color: var(--accent);">499 ₽</h1>
-            <button onclick="buy()">Купить</button>
+
+        <div class="card animate-in" style="animation-delay: 0.1s;">
+            <div style="font-size: 40px; margin-bottom: 10px;">🛡️</div>
+            <h2>Cardinal Extension</h2>
+            <p style="color: var(--hint); font-size: 13px; margin-top: 5px;">v2.1 • Мощная автоматизация процессов</p>
+            <div class="price">499 ₽</div>
+            <button onclick="sendBuy()">Приобрести</button>
         </div>
     </div>
 
-    <!-- СТРАНИЦА ПРОФИЛЯ -->
-    <div id="profile-page" style="width: 100%;">
+    <!-- Страница Профиля -->
+    <div id="profile-page" class="page">
         <div class="card">
-            <div id="user-avatar" class="avatar">?</div>
-            <h2 id="full-name">Имя Фамилия</h2>
-            <p id="user-status" style="color: var(--accent); font-size: 14px;">● Premium Пользователь</p>
+            <div id="user-avatar" class="avatar-container">?</div>
+            <h2 id="user-full-name">Кирилл</h2>
+            <div style="display: inline-block; padding: 4px 12px; background: rgba(16,185,129,0.1); color: var(--accent); border-radius: 20px; font-size: 12px; margin-top: 8px; font-weight: bold;">
+                Обычный аккаунт
+            </div>
+
+            <div class="info-list">
+                <div class="info-item">
+                    <span class="info-label">ID аккаунта</span>
+                    <span class="info-value" id="user-id">674139959</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Имя пользователя</span>
+                    <span class="info-value" id="user-tag">@username</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Язык системы</span>
+                    <span class="info-value" id="user-lang">Русский</span>
+                </div>
+            </div>
             
-            <div class="info-row"><span>Telegram ID:</span><span id="tg-id">674139959</span></div>
-            <div class="info-row"><span>Username:</span><span id="tg-user">@username</span></div>
-            <div class="info-row"><span>Язык:</span><span id="tg-lang">ru</span></div>
+            <button style="margin-top: 25px; background: rgba(255,255,255,0.05); box-shadow: none; border: 1px solid rgba(255,255,255,0.1);" onclick="location.reload()">
+                Обновить данные
+            </button>
         </div>
     </div>
 
@@ -97,45 +166,45 @@
         tg.ready();
         tg.expand();
 
-        function renderData() {
+        // Парсинг данных
+        function init() {
             const user = tg.initDataUnsafe?.user;
             if (user) {
-                document.getElementById('welcome-name').innerText = `Привет, ${user.first_name}!`;
-                document.getElementById('full-name').innerText = `${user.first_name} ${user.last_name || ""}`;
-                document.getElementById('tg-id').innerText = user.id;
-                document.getElementById('tg-user').innerText = user.username ? `@${user.username}` : "скрыт";
-                document.getElementById('tg-lang').innerText = user.language_code;
+                document.getElementById('user-greeting').innerText = `Привет, ${user.first_name}! 👋`;
+                document.getElementById('user-full-name').innerText = `${user.first_name} ${user.last_name || ""}`;
+                document.getElementById('user-id').innerText = user.id;
+                document.getElementById('user-tag').innerText = user.username ? `@${user.username}` : "скрыт";
+                document.getElementById('user-lang').innerText = user.language_code.toUpperCase();
 
-                // Аватарка: если есть ссылка на фото, ставим её, иначе первую букву
                 if (user.photo_url) {
                     document.getElementById('user-avatar').innerHTML = `<img src="${user.photo_url}">`;
                 } else {
-                    document.getElementById('user-letter').innerText = user.first_name.charAt(0);
+                    document.getElementById('user-avatar').innerText = user.first_name.charAt(0);
                 }
             }
         }
 
-        // Логика табов
-        document.getElementById('tab-shop').onclick = () => {
-            showPage('shop');
-        };
-        document.getElementById('tab-profile').onclick = () => {
-            showPage('profile');
-        };
+        // Логика вкладок
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
 
-        function showPage(page) {
-            const isShop = page === 'shop';
-            document.getElementById('shop-page').style.display = isShop ? 'block' : 'none';
-            document.getElementById('profile-page').style.display = isShop ? 'none' : 'block';
-            document.getElementById('tab-shop').classList.toggle('active', isShop);
-            document.getElementById('tab-profile').classList.toggle('active', !isShop);
+            if (pageId === 'shop') {
+                document.getElementById('shop-page').classList.add('active');
+                document.getElementById('tab-shop').classList.add('active');
+            } else {
+                document.getElementById('profile-page').classList.add('active');
+                document.getElementById('tab-profile').classList.add('active');
+            }
+            tg.HapticFeedback.impactOccurred('light'); // Вибрация при переключении
         }
 
-        function buy() {
+        function sendBuy() {
+            tg.HapticFeedback.notificationOccurred('success'); // Вибрация при покупке
             tg.sendData("buy_cardinal");
         }
 
-        renderData();
+        init();
     </script>
 </body>
 </html>
