@@ -47,12 +47,12 @@
         // Инициализируем Telegram WebApp
         let tg = window.Telegram.WebApp;
         tg.expand(); // Расширяем на весь экран
-
-        // Кнопка "Купить"
+        
         document.getElementById('buyBtn').addEventListener('click', function() {
-            // Отправляем данные обратно в бота
-            tg.sendData("buy_cardinal_ext");
+        let tg = window.Telegram.WebApp;
+        tg.sendData("buy_cardinal_ext"); // Эта строка должна совпадать с тем, что в Python
         });
+        
     </script>
 </body>
 </html>
