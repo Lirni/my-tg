@@ -3,93 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cardinal Store</title>
+    <title>Cardinal Debug</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        :root { --bg: #1a232e; --card: #242f3d; --accent: #40b37e; --text: #ffffff; --hint: #8aa1b1; }
-        body { font-family: sans-serif; background: var(--bg); color: var(--text); margin: 0; padding: 20px; display: flex; flex-direction: column; align-items: center; }
-        .nav { display: flex; width: 100%; justify-content: space-around; background: var(--card); border-radius: 12px; margin-bottom: 20px; }
-        .nav-item { padding: 12px; cursor: pointer; color: var(--hint); }
-        .nav-item.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
-        .card { background: var(--card); width: 100%; padding: 20px; border-radius: 15px; box-sizing: border-box; text-align: center; margin-bottom: 15px; }
-        .avatar { width: 80px; height: 80px; background: var(--accent); border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 32px; }
-        button { background: var(--accent); color: white; border: none; padding: 15px; border-radius: 12px; width: 100%; font-weight: bold; cursor: pointer; }
-        .info-row { display: flex; justify-content: space-between; margin: 10px 0; border-bottom: 1px solid #333; }
-        #profile-page { display: none; }
+        body { font-family: sans-serif; background: #1a232e; color: white; padding: 20px; text-align: center; }
+        .card { background: #242f3d; padding: 20px; border-radius: 15px; margin-bottom: 20px; }
+        .debug-box { 
+            background: #000; color: #0f0; padding: 10px; border-radius: 10px; 
+            text-align: left; font-family: monospace; font-size: 10px; 
+            overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;
+        }
+        button { background: #40b37e; color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; cursor: pointer; margin-top: 10px;}
+        h3 { margin-top: 0; }
+        .status { color: #8aa1b1; font-size: 12px; margin-bottom: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="nav">
-        <div id="tab-shop" class="nav-item active">🛒 Магазин</div>
-        <div id="tab-profile" class="nav-item">👤 Профиль</div>
+    <div class="card">
+        <h3 id="u-name">Загрузка...</h3>
+        <div class="status" id="u-status">Ожидание данных от Telegram...</div>
+        <button onclick="location.reload()">Обновить страницу</button>
     </div>
 
-    <div id="shop-page" style="width: 100%;">
-        <div class="card">
-            <h3 id="welcome-user">Привет, Пользователь!</h3>
-            <p style="color: var(--hint);">Добро пожаловать в Cardinal Store</p>
-        </div>
-        <div class="card">
-            <h3>Cardinal Extension</h3>
-            <h2 style="color: var(--accent);">499 ₽</h2>
-            <button onclick="buy()">Купить</button>
-        </div>
-    </div>
-
-    <div id="profile-page" style="width: 100%;">
-        <div class="card">
-            <div id="user-letter" class="avatar">?</div>
-            <h2 id="full-name">Имя Фамилия</h2>
-            <div class="info-row"><span>ID:</span><span id="tg-id">0</span></div>
-            <div class="info-row"><span>Username:</span><span id="tg-user">@none</span></div>
-            <button onclick="location.reload()" style="background: #444; margin-top: 20px;">Обновить данные</button>
-        </div>
+    <div class="card">
+        <div style="font-size: 12px; color: #8aa1b1; margin-bottom: 5px;">DEBUG LOG:</div>
+        <div id="debug-log" class="debug-box">Инициализация...</div>
     </div>
 
     <script>
-        let tg = window.Telegram.WebApp;
+        // Инициализация
+        const tg = window.Telegram.WebApp;
         
-        // Сообщаем Telegram, что приложение готово
-        tg.ready();
-        tg.expand();
+        function initApp() {
+            try {
+                tg.ready();
+                tg.expand();
 
-        function renderData() {
-            // Пытаемся получить данные
-            const user = tg.initDataUnsafe?.user;
+                const logBox = document.getElementById('debug-log');
+                const nameBox = document.getElementById('u-name');
+                const statusBox = document.getElementById('u-status');
 
-            if (user) {
-                document.getElementById('welcome-user').innerText = `Привет, ${user.first_name}!`;
-                document.getElementById('full-name').innerText = `${user.first_name} ${user.last_name || ""}`;
-                document.getElementById('tg-id').innerText = user.id;
-                document.getElementById('tg-user').innerText = user.username ? `@${user.username}` : "скрыт";
-                document.getElementById('user-letter').innerText = user.first_name.charAt(0);
-            } else {
-                // Если данных нет, выведем ошибку в консоль и на экран для теста
-                console.log("Данные пользователя не найдены");
+                // 1. Проверяем вообще наличие объекта Telegram
+                if (!tg) {
+                    logBox.innerText = "Ошибка: window.Telegram не найден!";
+                    return;
+                }
+
+                // 2. Выводим всё, что есть в initDataUnsafe
+                const fullData = JSON.stringify(tg.initDataUnsafe, null, 2);
+                logBox.innerText = fullData;
+
+                // 3. Пытаемся достать пользователя
+                const user = tg.initDataUnsafe?.user;
+
+                if (user) {
+                    nameBox.innerText = "Привет, " + user.first_name + "!";
+                    statusBox.innerText = "Данные успешно получены";
+                    statusBox.style.color = "#40b37e";
+                } else {
+                    nameBox.innerText = "Данные не найдены";
+                    statusBox.innerText = "Объект 'user' пуст. Попробуйте открыть через бота.";
+                    statusBox.style.color = "#ff4f4f";
+                }
+
+            } catch (e) {
+                document.getElementById('debug-log').innerText = "Критическая ошибка: " + e.message;
             }
         }
 
-        // Переключение вкладок
-        document.getElementById('tab-shop').onclick = () => {
-            document.getElementById('shop-page').style.display = 'block';
-            document.getElementById('profile-page').style.display = 'none';
-            document.getElementById('tab-shop').classList.add('active');
-            document.getElementById('tab-profile').classList.remove('active');
-        };
-
-        document.getElementById('tab-profile').onclick = () => {
-            document.getElementById('shop-page').style.display = 'none';
-            document.getElementById('profile-page').style.display = 'block';
-            document.getElementById('tab-profile').classList.add('active');
-            document.getElementById('tab-shop').classList.remove('active');
-            renderData(); // Обновляем при переходе на вкладку
-        };
-
-        function buy() { tg.sendData("buy_cardinal"); }
-
-        // Запуск при загрузке
-        renderData();
+        // Запускаем с небольшой задержкой, чтобы ТГ успел прокинуть данные
+        setTimeout(initApp, 500);
     </script>
 </body>
 </html>
