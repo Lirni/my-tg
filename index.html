@@ -6,74 +6,60 @@
     <title>Cardinal Debug</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background: #1a232e; color: white; padding: 20px; text-align: center; }
-        .card { background: #242f3d; padding: 20px; border-radius: 15px; margin-bottom: 20px; }
-        .debug-box { 
-            background: #000; color: #0f0; padding: 10px; border-radius: 10px; 
-            text-align: left; font-family: monospace; font-size: 10px; 
-            overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;
-        }
-        button { background: #40b37e; color: white; border: none; padding: 10px; border-radius: 10px; width: 100%; cursor: pointer; margin-top: 10px;}
-        h3 { margin-top: 0; }
-        .status { color: #8aa1b1; font-size: 12px; margin-bottom: 10px; }
+        body { font-family: sans-serif; background: #1a232e; color: white; padding: 20px; font-size: 14px; }
+        .card { background: #242f3d; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #333; }
+        .debug { background: #000; color: #0f0; padding: 10px; border-radius: 8px; font-family: monospace; font-size: 11px; white-space: pre-wrap; word-break: break-all; }
+        .success { color: #40b37e; font-weight: bold; }
+        .error { color: #ff4f4f; font-weight: bold; }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h3 id="u-name">Загрузка...</h3>
-        <div class="status" id="u-status">Ожидание данных от Telegram...</div>
-        <button onclick="location.reload()">Обновить страницу</button>
+        <h3>Диагностика системы</h3>
+        <div id="status">Проверка...</div>
     </div>
 
     <div class="card">
-        <div style="font-size: 12px; color: #8aa1b1; margin-bottom: 5px;">DEBUG LOG:</div>
-        <div id="debug-log" class="debug-box">Инициализация...</div>
+        <div>1. Данные из Hash (сырые):</div>
+        <div id="hash-log" class="debug">Ожидание...</div>
     </div>
 
+    <div class="card">
+        <div>2. Объект User (распакованный):</div>
+        <div id="user-log" class="debug">Ожидание...</div>
+    </div>
+
+    <button onclick="location.reload()" style="width: 100%; padding: 10px; background: #444; color: white; border: none; border-radius: 8px;">Обновить страницу</button>
+
     <script>
-        // Инициализация
         const tg = window.Telegram.WebApp;
         
-        function initApp() {
-            try {
-                tg.ready();
-                tg.expand();
+        function runDiagnostics() {
+            tg.ready();
+            tg.expand();
 
-                const logBox = document.getElementById('debug-log');
-                const nameBox = document.getElementById('u-name');
-                const statusBox = document.getElementById('u-status');
+            const hashBox = document.getElementById('hash-log');
+            const userBox = document.getElementById('user-log');
+            const statusBox = document.getElementById('status');
 
-                // 1. Проверяем вообще наличие объекта Telegram
-                if (!tg) {
-                    logBox.innerText = "Ошибка: window.Telegram не найден!";
-                    return;
-                }
+            // 1. Проверяем Hash (тут лежат данные до того, как скрипт ТГ их превратит в объект)
+            const currentHash = window.location.hash;
+            hashBox.innerText = currentHash || "ПУСТО (Данные не пришли в URL)";
 
-                // 2. Выводим всё, что есть в initDataUnsafe
-                const fullData = JSON.stringify(tg.initDataUnsafe, null, 2);
-                logBox.innerText = fullData;
-
-                // 3. Пытаемся достать пользователя
-                const user = tg.initDataUnsafe?.user;
-
-                if (user) {
-                    nameBox.innerText = "Привет, " + user.first_name + "!";
-                    statusBox.innerText = "Данные успешно получены";
-                    statusBox.style.color = "#40b37e";
-                } else {
-                    nameBox.innerText = "Данные не найдены";
-                    statusBox.innerText = "Объект 'user' пуст. Попробуйте открыть через бота.";
-                    statusBox.style.color = "#ff4f4f";
-                }
-
-            } catch (e) {
-                document.getElementById('debug-log').innerText = "Критическая ошибка: " + e.message;
+            // 2. Проверяем готовый объект
+            const userData = tg.initDataUnsafe?.user;
+            if (userData) {
+                userBox.innerText = JSON.stringify(userData, null, 2);
+                statusBox.innerHTML = '<span class="success">✅ ДАННЫЕ ПОЛУЧЕНЫ!</span>';
+            } else {
+                userBox.innerText = "ОБЪЕКТ USER ПУСТ";
+                statusBox.innerHTML = '<span class="error">❌ ДАННЫЕ НЕ НАЙДЕНЫ</span>';
             }
         }
 
-        // Запускаем с небольшой задержкой, чтобы ТГ успел прокинуть данные
-        setTimeout(initApp, 500);
+        // Запуск через 300мс
+        setTimeout(runDiagnostics, 300);
     </script>
 </body>
 </html>
