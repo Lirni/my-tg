@@ -8,51 +8,67 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
-            font-family: sans-serif;
-            background-color: var(--tg-theme-bg-color); /* Берем цвет темы телеграма */
-            color: var(--tg-theme-text-color);
-            text-align: center;
-            padding: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1c2733; /* Темный фон как в ТГ */
+            color: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
         }
         .card {
-            background: var(--tg-theme-secondary-bg-color);
-            padding: 15px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            background-color: #242f3d;
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            text-align: center;
+            width: 80%;
+            max-width: 300px;
         }
+        .icon { font-size: 50px; margin-bottom: 10px; }
+        h2 { margin: 10px 0; color: #50a2e3; }
+        p { color: #8aa1b1; font-size: 14px; }
+        .price { font-size: 24px; font-weight: bold; margin: 15px 0; color: #40b37e; }
+        
         button {
-            background-color: #248b6c; /* Вот тут мы можем задать ЗЕЛЕНЫЙ цвет! */
+            background-color: #40b37e; /* Зеленая кнопка */
             color: white;
             border: none;
-            padding: 12px 20px;
-            border-radius: 8px;
-            font-size: 16px;
+            padding: 15px 30px;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
             cursor: pointer;
             width: 100%;
+            transition: background 0.3s;
         }
+        button:active { transform: scale(0.98); }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <h2>Cardinal Extension</h2>
-        <p>Версия 2.1 • Автоматизация</p>
-        <h3 style="color: #248b6c;">499 ₽</h3>
+        <div class="icon">💎</div>
+        <h2>Cardinal Ext</h2>
+        <p>Расширение для автоматизации процессов</p>
+        <div class="price">499 ₽</div>
+        <button id="buyBtn">Купить сейчас</button>
     </div>
 
-    <button id="buyBtn">Купить расширение</button>
-
     <script>
-        // Инициализируем Telegram WebApp
         let tg = window.Telegram.WebApp;
-        tg.expand(); // Расширяем на весь экран
-        
-        document.getElementById('buyBtn').addEventListener('click', function() {
-        let tg = window.Telegram.WebApp;
-        tg.sendData("buy_cardinal_ext"); // Эта строка должна совпадать с тем, что в Python
+        tg.expand(); // Развернуть на всё окно
+
+        // Находим кнопку
+        let btn = document.getElementById('buyBtn');
+
+        // Вешаем событие клика
+        btn.addEventListener('click', function() {
+            // Отправляем данные боту (ВАЖНО: это работает только через Reply-кнопку в боте)
+            tg.sendData("buy_cardinal_ext");
         });
-        
     </script>
 </body>
 </html>
