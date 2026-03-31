@@ -3,71 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cardinal Store</title>
-    <!-- Подключаем скрипт Telegram -->
+    <title>Prime Era - Cardinal</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1c2733; /* Темный фон как в ТГ */
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #1a232e; /* Цвет как на твоем скрине */
             color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            height: 100vh;
+            padding-top: 50px;
             margin: 0;
         }
         .card {
             background-color: #242f3d;
-            padding: 25px;
-            border-radius: 15px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
-            text-align: center;
+            padding: 30px;
+            border-radius: 20px;
             width: 80%;
-            max-width: 300px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
         }
-        .icon { font-size: 50px; margin-bottom: 10px; }
-        h2 { margin: 10px 0; color: #50a2e3; }
-        p { color: #8aa1b1; font-size: 14px; }
-        .price { font-size: 24px; font-weight: bold; margin: 15px 0; color: #40b37e; }
+        h1 { font-size: 24px; margin-bottom: 10px; }
+        p { color: #8aa1b1; margin-bottom: 20px; }
+        .price { color: #40b37e; font-size: 28px; font-weight: bold; margin-bottom: 30px; }
         
         button {
-            background-color: #40b37e; /* Зеленая кнопка */
+            background-color: #2d8c6b; /* Зеленая кнопка как на скрине */
             color: white;
             border: none;
-            padding: 15px 30px;
-            border-radius: 10px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
+            padding: 15px 0;
             width: 100%;
-            transition: background 0.3s;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 500;
+            cursor: pointer;
         }
-        button:active { transform: scale(0.98); }
+        button:active { background-color: #247558; }
     </style>
 </head>
 <body>
 
     <div class="card">
-        <div class="icon">💎</div>
-        <h2>Cardinal Ext</h2>
-        <p>Расширение для автоматизации процессов</p>
+        <h1>Cardinal Extension</h1>
+        <p>Версия 2.1 • Автоматизация</p>
         <div class="price">499 ₽</div>
-        <button id="buyBtn">Купить сейчас</button>
+        <button id="buyBtn">Купить расширение</button>
     </div>
 
     <script>
         let tg = window.Telegram.WebApp;
-        tg.expand(); // Развернуть на всё окно
+        tg.expand();
 
-        // Находим кнопку
-        let btn = document.getElementById('buyBtn');
-
-        // Вешаем событие клика
-        btn.addEventListener('click', function() {
-            // Отправляем данные боту (ВАЖНО: это работает только через Reply-кнопку в боте)
-            tg.sendData("buy_cardinal_ext");
+        document.getElementById('buyBtn').addEventListener('click', function() {
+            // Отправляем строку "buy_cardinal" боту
+            tg.sendData("buy_cardinal");
         });
     </script>
 </body>
