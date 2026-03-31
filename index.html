@@ -3,204 +3,213 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cardinal Store Premium</title>
+    <title>Prime Era Hub</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --bg: #0f172a;
             --card-bg: rgba(30, 41, 59, 0.7);
-            --accent: #10b981; /* Изумрудный */
-            --accent-glow: rgba(16, 185, 129, 0.3);
+            --accent: #10b981;
             --text: #f8fafc;
             --hint: #94a3b8;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: -apple-system, sans-serif;
             background: radial-gradient(circle at top, #1e293b 0%, #0f172a 100%);
-            color: var(--text);
-            margin: 0; padding: 20px;
-            overflow-x: hidden;
-            min-height: 100vh;
+            color: var(--text); margin: 0; padding: 15px; min-height: 100vh;
         }
 
-        /* Анимация появления */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        .animate { animation: fadeInUp 0.4s ease forwards; }
 
-        .animate-in { animation: fadeInUp 0.6s ease out forwards; }
+        /* Шапка профиля мини */
+        .mini-header {
+            display: flex; align-items: center; gap: 12px;
+            padding: 10px; margin-bottom: 20px;
+        }
+        .mini-avatar {
+            width: 45px; height: 45px; border-radius: 12px;
+            background: var(--accent); display: flex; align-items: center; justify-content: center;
+            font-weight: bold; font-size: 20px; overflow: hidden;
+        }
+        .mini-avatar img { width: 100%; height: 100%; object-fit: cover; }
 
-        /* Навигация (Pill style) */
-        .nav {
-            display: flex; background: var(--card-bg);
-            padding: 5px; border-radius: 16px;
-            margin-bottom: 25px; backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.1);
+        /* Навигационная сетка (Меню) */
+        .grid-menu {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;
         }
-        .nav-item {
-            flex: 1; text-align: center; padding: 12px;
-            border-radius: 12px; cursor: pointer;
-            transition: all 0.3s ease; font-weight: 600;
-            color: var(--hint);
+        .menu-item {
+            background: var(--card-bg); padding: 15px; border-radius: 18px;
+            text-align: center; border: 1px solid rgba(255,255,255,0.05);
+            backdrop-filter: blur(10px); cursor: pointer; transition: 0.2s;
         }
-        .nav-item.active {
-            background: var(--accent); color: white;
-            box-shadow: 0 4px 15px var(--accent-glow);
-        }
+        .menu-item:active { transform: scale(0.95); background: rgba(255,255,255,0.1); }
+        .menu-item i { font-size: 24px; display: block; margin-bottom: 8px; }
+        .menu-item span { font-size: 13px; font-weight: 600; color: var(--hint); }
 
-        /* Карточки */
+        /* Карточки контента */
         .card {
-            background: var(--card-bg);
+            background: var(--card-bg); border-radius: 24px; padding: 20px;
+            border: 1px solid rgba(255,255,255,0.05); margin-bottom: 15px;
             backdrop-filter: blur(12px);
-            border-radius: 24px;
-            padding: 24px;
-            border: 1px solid rgba(255,255,255,0.05);
-            margin-bottom: 20px;
-            transition: transform 0.2s ease;
         }
 
-        .welcome-card {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(30, 41, 59, 0.7) 100%);
-            text-align: left;
-        }
-
-        h1, h2, h3 { margin: 0; }
-        .price { font-size: 32px; color: var(--accent); margin: 15px 0; font-weight: 800; }
-
-        /* Кнопки */
+        .price { font-size: 28px; color: var(--accent); font-weight: 800; margin: 10px 0; }
         button {
-            background: var(--accent);
-            color: white; border: none;
-            padding: 16px; border-radius: 16px;
-            width: 100%; font-size: 16px; font-weight: 700;
-            cursor: pointer; transition: all 0.2s ease;
-            box-shadow: 0 4px 20px var(--accent-glow);
+            background: var(--accent); color: white; border: none; padding: 14px;
+            border-radius: 14px; width: 100%; font-weight: bold; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
         }
-        button:active { transform: scale(0.96); opacity: 0.9; }
 
-        /* Профиль */
-        .avatar-container {
-            width: 90px; height: 90px; margin: 0 auto 15px;
-            border-radius: 30px; background: linear-gradient(45deg, var(--accent), #34d399);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 36px; font-weight: bold;
-            box-shadow: 0 8px 25px var(--accent-glow);
-            overflow: hidden;
-        }
-        .avatar-container img { width: 100%; height: 100%; object-fit: cover; }
-
-        .info-list { margin-top: 20px; text-align: left; }
-        .info-item {
-            display: flex; justify-content: space-between;
-            padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
-        }
-        .info-label { color: var(--hint); font-size: 14px; }
-        .info-value { font-weight: 500; font-size: 14px; }
-
-        /* Переключатель страниц */
+        /* Страницы */
         .page { display: none; }
-        .page.active { display: block; animation: fadeInUp 0.4s ease forwards; }
+        .page.active { display: block; }
 
+        /* Отзывы */
+        .review-card {
+            background: rgba(255,255,255,0.03); border-radius: 12px;
+            padding: 12px; margin-bottom: 10px; font-size: 13px;
+        }
+        .review-author { color: var(--accent); font-weight: bold; margin-bottom: 4px; }
+
+        /* Футер Навигация */
+        .bottom-nav {
+            position: fixed; bottom: 20px; left: 20px; right: 20px;
+            background: rgba(30, 41, 59, 0.9); backdrop-filter: blur(20px);
+            display: flex; justify-content: space-around; padding: 12px;
+            border-radius: 20px; border: 1px solid rgba(255,255,255,0.1);
+        }
+        .nav-btn { color: var(--hint); font-size: 12px; font-weight: bold; cursor: pointer; }
+        .nav-btn.active { color: var(--accent); }
     </style>
 </head>
 <body>
 
-    <!-- Навигация -->
-    <div class="nav animate-in">
-        <div id="tab-shop" class="nav-item active" onclick="showPage('shop')">Магазин</div>
-        <div id="tab-profile" class="nav-item" onclick="showPage('profile')">Профиль</div>
-    </div>
-
-    <!-- Страница Магазина -->
-    <div id="shop-page" class="page active">
-        <div class="card welcome-card animate-in">
-            <h3 id="user-greeting">Привет, Пользователь!</h3>
-            <p style="color: var(--hint); font-size: 14px; margin-top: 5px;">Твой личный кабинет Cardinal Store</p>
-        </div>
-
-        <div class="card animate-in" style="animation-delay: 0.1s;">
-            <div style="font-size: 40px; margin-bottom: 10px;">🛡️</div>
-            <h2>Cardinal Extension</h2>
-            <p style="color: var(--hint); font-size: 13px; margin-top: 5px;">v2.1 • Мощная автоматизация процессов</p>
-            <div class="price">499 ₽</div>
-            <button onclick="sendBuy()">Приобрести</button>
+    <!-- Мини-шапка пользователя -->
+    <div class="mini-header animate">
+        <div id="u-avatar" class="mini-avatar">?</div>
+        <div>
+            <div id="u-name" style="font-weight: bold; font-size: 16px;">Загрузка...</div>
+            <div style="font-size: 12px; color: var(--hint);">Prime Era Client</div>
         </div>
     </div>
 
-    <!-- Страница Профиля -->
-    <div id="profile-page" class="page">
+    <!-- ГЛАВНОЕ МЕНЮ (ГРИД) -->
+    <div class="grid-menu animate">
+        <div class="menu-item" onclick="showPage('shop')"><i>📦</i><span>Товары</span></div>
+        <div class="menu-item" onclick="showPage('reviews')"><i>⭐️</i><span>Отзывы</span></div>
+        <div class="menu-item" onclick="openLink('https://t.me/your_support')"><i>👨‍💻</i><span>Поддержка</span></div>
+        <div class="menu-item" onclick="showPage('info')"><i>ℹ️</i><span>Инфо</span></div>
+        <div class="menu-item" style="grid-column: span 2;" onclick="openLink('https://t.me/your_channel')">
+            <i>📢</i><span>Наш Канал</span>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА: ТОВАРЫ -->
+    <div id="shop-page" class="page active animate">
         <div class="card">
-            <div id="user-avatar" class="avatar-container">?</div>
-            <h2 id="user-full-name">Кирилл</h2>
-            <div style="display: inline-block; padding: 4px 12px; background: rgba(16,185,129,0.1); color: var(--accent); border-radius: 20px; font-size: 12px; margin-top: 8px; font-weight: bold;">
-                Обычный аккаунт
-            </div>
-
-            <div class="info-list">
-                <div class="info-item">
-                    <span class="info-label">ID аккаунта</span>
-                    <span class="info-value" id="user-id">674139959</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Имя пользователя</span>
-                    <span class="info-value" id="user-tag">@username</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Язык системы</span>
-                    <span class="info-value" id="user-lang">Русский</span>
-                </div>
-            </div>
-            
-            <button style="margin-top: 25px; background: rgba(255,255,255,0.05); box-shadow: none; border: 1px solid rgba(255,255,255,0.1);" onclick="location.reload()">
-                Обновить данные
-            </button>
+            <h3 style="margin-bottom: 5px;">Cardinal Extension</h3>
+            <p style="color: var(--hint); font-size: 12px;">v2.1 • Автоматизация процессов</p>
+            <div class="price">499 ₽</div>
+            <button onclick="buy()">Приобрести сейчас</button>
         </div>
+    </div>
+
+    <!-- СТРАНИЦА: ОТЗЫВЫ -->
+    <div id="reviews-page" class="page animate">
+        <div class="card">
+            <h3>Отзывы клиентов</h3>
+            <div class="review-card">
+                <div class="review-author">@ivan_dev</div>
+                <div>Лучшее расширение для автоматизации. Окупилось за день!</div>
+            </div>
+            <div class="review-card">
+                <div class="review-author">@crypto_king</div>
+                <div>Дизайн пушка, софт работает без вылетов. Рекомендую.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА: ИНФОРМАЦИЯ -->
+    <div id="info-page" class="page animate">
+        <div class="card">
+            <h3>О проекте</h3>
+            <p style="color: var(--hint); font-size: 14px; line-height: 1.5;">
+                Prime Era — это передовая экосистема для автоматизации рутинных задач. 
+                Наши продукты созданы для того, чтобы экономить ваше время и увеличивать профит.
+            </p>
+            <p style="color: var(--accent); font-size: 12px;">Версия приложения: 1.0.4 (Stable)</p>
+        </div>
+    </div>
+
+    <!-- СТРАНИЦА: ПРОФИЛЬ -->
+    <div id="profile-page" class="page animate">
+        <div class="card" style="text-align: center;">
+            <div id="p-avatar" class="mini-avatar" style="width: 80px; height: 80px; margin: 0 auto 15px; font-size: 32px;">?</div>
+            <h2 id="p-name">Имя</h2>
+            <div style="color: var(--hint); font-size: 14px; margin-bottom: 20px;" id="p-id">ID: 000</div>
+            
+            <div style="text-align: left; background: rgba(0,0,0,0.2); border-radius: 12px; padding: 15px;">
+                <div style="display:flex; justify-content: space-between; margin-bottom: 10px;">
+                    <span style="color: var(--hint);">Ранг:</span><span>Bronze</span>
+                </div>
+                <div style="display:flex; justify-content: space-between;">
+                    <span style="color: var(--hint);">Покупок:</span><span>1</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ФУТЕР НАВИГАЦИЯ -->
+    <div class="bottom-nav animate">
+        <div class="nav-btn active" id="btn-home" onclick="showPage('shop')">🏠 Главная</div>
+        <div class="nav-btn" id="btn-profile" onclick="showPage('profile')">👤 Профиль</div>
     </div>
 
     <script>
         const tg = window.Telegram.WebApp;
-        tg.ready();
         tg.expand();
 
-        // Парсинг данных
         function init() {
             const user = tg.initDataUnsafe?.user;
             if (user) {
-                document.getElementById('user-greeting').innerText = `Привет, ${user.first_name}! 👋`;
-                document.getElementById('user-full-name').innerText = `${user.first_name} ${user.last_name || ""}`;
-                document.getElementById('user-id').innerText = user.id;
-                document.getElementById('user-tag').innerText = user.username ? `@${user.username}` : "скрыт";
-                document.getElementById('user-lang').innerText = user.language_code.toUpperCase();
+                const name = user.first_name;
+                document.getElementById('u-name').innerText = name;
+                document.getElementById('p-name').innerText = name + " " + (user.last_name || "");
+                document.getElementById('p-id').innerText = "ID: " + user.id;
 
                 if (user.photo_url) {
-                    document.getElementById('user-avatar').innerHTML = `<img src="${user.photo_url}">`;
+                    const img = `<img src="${user.photo_url}">`;
+                    document.getElementById('u-avatar').innerHTML = img;
+                    document.getElementById('p-avatar').innerHTML = img;
                 } else {
-                    document.getElementById('user-avatar').innerText = user.first_name.charAt(0);
+                    document.getElementById('u-avatar').innerText = name.charAt(0);
+                    document.getElementById('p-avatar').innerText = name.charAt(0);
                 }
             }
         }
 
-        // Логика вкладок
         function showPage(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-
-            if (pageId === 'shop') {
-                document.getElementById('shop-page').classList.add('active');
-                document.getElementById('tab-shop').classList.add('active');
-            } else {
-                document.getElementById('profile-page').classList.add('active');
-                document.getElementById('tab-profile').classList.add('active');
-            }
-            tg.HapticFeedback.impactOccurred('light'); // Вибрация при переключении
+            document.getElementById(pageId + '-page').classList.add('active');
+            
+            // Навигация в футере
+            const isProfile = pageId === 'profile';
+            document.getElementById('btn-home').classList.toggle('active', !isProfile);
+            document.getElementById('btn-profile').classList.toggle('active', isProfile);
+            
+            tg.HapticFeedback.impactOccurred('light');
         }
 
-        function sendBuy() {
-            tg.HapticFeedback.notificationOccurred('success'); // Вибрация при покупке
+        function openLink(url) {
+            tg.HapticFeedback.selectionChanged();
+            tg.openTelegramLink(url);
+        }
+
+        function buy() {
+            tg.HapticFeedback.notificationOccurred('success');
             tg.sendData("buy_cardinal");
         }
 
