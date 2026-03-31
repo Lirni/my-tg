@@ -3,62 +3,139 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cardinal Debug</title>
+    <title>Prime Era - Cardinal</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        body { font-family: sans-serif; background: #1a232e; color: white; padding: 20px; font-size: 14px; }
-        .card { background: #242f3d; padding: 15px; border-radius: 12px; margin-bottom: 15px; border: 1px solid #333; }
-        .debug { background: #000; color: #0f0; padding: 10px; border-radius: 8px; font-family: monospace; font-size: 11px; white-space: pre-wrap; word-break: break-all; }
-        .success { color: #40b37e; font-weight: bold; }
-        .error { color: #ff4f4f; font-weight: bold; }
+        :root {
+            --bg: #1a232e;
+            --card: #242f3d;
+            --accent: #40b37e;
+            --text: #ffffff;
+            --hint: #8aa1b1;
+        }
+        body {
+            font-family: -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+        /* Навигация */
+        .nav {
+            display: flex; width: 100%; justify-content: space-around;
+            background: var(--card); border-radius: 12px; margin-bottom: 20px;
+        }
+        .nav-item {
+            padding: 12px; cursor: pointer; color: var(--hint); font-weight: bold;
+        }
+        .nav-item.active { color: var(--accent); border-bottom: 2px solid var(--accent); }
+
+        /* Карточки */
+        .card {
+            background: var(--card); width: 100%; padding: 20px;
+            border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            box-sizing: border-box; text-align: center; margin-bottom: 15px;
+        }
+        .avatar {
+            width: 80px; height: 80px; background: var(--accent);
+            border-radius: 50%; margin: 0 auto 15px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; font-weight: bold; overflow: hidden;
+        }
+        .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+        button {
+            background: var(--accent); color: white; border: none;
+            padding: 15px; border-radius: 12px; width: 100%;
+            font-size: 16px; font-weight: bold; cursor: pointer;
+        }
+        .info-row {
+            display: flex; justify-content: space-between;
+            margin: 12px 0; border-bottom: 1px solid #333; padding-bottom: 5px;
+            font-size: 14px;
+        }
+        .info-row span:first-child { color: var(--hint); }
+        #profile-page { display: none; }
     </style>
 </head>
 <body>
 
-    <div class="card">
-        <h3>Диагностика системы</h3>
-        <div id="status">Проверка...</div>
+    <div class="nav">
+        <div id="tab-shop" class="nav-item active">🛒 Магазин</div>
+        <div id="tab-profile" class="nav-item">👤 Профиль</div>
     </div>
 
-    <div class="card">
-        <div>1. Данные из Hash (сырые):</div>
-        <div id="hash-log" class="debug">Ожидание...</div>
+    <!-- СТРАНИЦА МАГАЗИНА -->
+    <div id="shop-page" style="width: 100%;">
+        <div class="card">
+            <h2 id="welcome-name">Привет!</h2>
+            <p style="color: var(--hint);">Добро пожаловать в Cardinal Store</p>
+        </div>
+        <div class="card">
+            <h3>Cardinal Extension</h3>
+            <p style="color: var(--hint);">v2.1 • Автоматизация</p>
+            <h1 style="color: var(--accent);">499 ₽</h1>
+            <button onclick="buy()">Купить</button>
+        </div>
     </div>
 
-    <div class="card">
-        <div>2. Объект User (распакованный):</div>
-        <div id="user-log" class="debug">Ожидание...</div>
-    </div>
-
-    <button onclick="location.reload()" style="width: 100%; padding: 10px; background: #444; color: white; border: none; border-radius: 8px;">Обновить страницу</button>
-
-    <<script>
-    const tg = window.Telegram.WebApp;
-    tg.ready();
-    tg.expand();
-
-    function debug() {
-        const hash = window.location.hash;
-        const log = document.getElementById('hash-log');
-        const userLog = document.getElementById('user-log');
-        
-        log.innerText = hash || "Hash ПУСТО";
-
-        // Попробуем достать данные из initData (это строка)
-        if (tg.initData) {
-            userLog.innerText = "initData есть!\n" + tg.initData;
+    <!-- СТРАНИЦА ПРОФИЛЯ -->
+    <div id="profile-page" style="width: 100%;">
+        <div class="card">
+            <div id="user-avatar" class="avatar">?</div>
+            <h2 id="full-name">Имя Фамилия</h2>
+            <p id="user-status" style="color: var(--accent); font-size: 14px;">● Premium Пользователь</p>
             
-            // Если есть initData, значит данные точно внутри.
-            // ТГ иногда не распаковывает их в initDataUnsafe сразу.
-            if (tg.initDataUnsafe && tg.initDataUnsafe.user) {
-                document.getElementById('status').innerHTML = "✅ ПОБЕДА! Юзер: " + tg.initDataUnsafe.user.first_name;
-            }
-        } else {
-            userLog.innerText = "initData ПУСТО. ТГ не передал параметры.";
-        }
-    }
+            <div class="info-row"><span>Telegram ID:</span><span id="tg-id">674139959</span></div>
+            <div class="info-row"><span>Username:</span><span id="tg-user">@username</span></div>
+            <div class="info-row"><span>Язык:</span><span id="tg-lang">ru</span></div>
+        </div>
+    </div>
 
-    setTimeout(debug, 500);
-</script>
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.ready();
+        tg.expand();
+
+        function renderData() {
+            const user = tg.initDataUnsafe?.user;
+            if (user) {
+                document.getElementById('welcome-name').innerText = `Привет, ${user.first_name}!`;
+                document.getElementById('full-name').innerText = `${user.first_name} ${user.last_name || ""}`;
+                document.getElementById('tg-id').innerText = user.id;
+                document.getElementById('tg-user').innerText = user.username ? `@${user.username}` : "скрыт";
+                document.getElementById('tg-lang').innerText = user.language_code;
+
+                // Аватарка: если есть ссылка на фото, ставим её, иначе первую букву
+                if (user.photo_url) {
+                    document.getElementById('user-avatar').innerHTML = `<img src="${user.photo_url}">`;
+                } else {
+                    document.getElementById('user-letter').innerText = user.first_name.charAt(0);
+                }
+            }
+        }
+
+        // Логика табов
+        document.getElementById('tab-shop').onclick = () => {
+            showPage('shop');
+        };
+        document.getElementById('tab-profile').onclick = () => {
+            showPage('profile');
+        };
+
+        function showPage(page) {
+            const isShop = page === 'shop';
+            document.getElementById('shop-page').style.display = isShop ? 'block' : 'none';
+            document.getElementById('profile-page').style.display = isShop ? 'none' : 'block';
+            document.getElementById('tab-shop').classList.toggle('active', isShop);
+            document.getElementById('tab-profile').classList.toggle('active', !isShop);
+        }
+
+        function buy() {
+            tg.sendData("buy_cardinal");
+        }
+
+        renderData();
+    </script>
 </body>
 </html>
