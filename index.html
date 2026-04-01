@@ -3,219 +3,214 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cardinal Store</title>
+    <title>Cardinal Dev Store</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
-        /* Базовые настройки темы */
         :root {
-            --bg-color: #0e1621;
-            --secondary-bg: #17212b;
-            --text-color: #ffffff;
-            --hint-color: #708499;
-            --accent-color: #24a1de; /* ТГ Синий */
-            --button-hover: #2ea6ff;
-            --card-shadow: rgba(0, 0, 0, 0.2);
+            --primary: #6366f1; /* Индиго */
+            --bg: #f8fafc;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --accent-green: #10b981;
         }
 
-        * {
-            box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
+        /* Темная тема (если в ТГ включена) */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg: #0f172a;
+                --surface: #1e293b;
+                --text-main: #f8fafc;
+                --text-muted: #94a3b8;
+                --border: #334155;
+            }
         }
 
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            margin: 0;
-            padding: 16px;
-            padding-bottom: 80px; /* Отступ под навигацию */
-            line-height: 1.4;
+            font-family: 'Inter', -apple-system, sans-serif;
+            background-color: var(--bg); color: var(--text-main);
+            margin: 0; padding: 0; padding-bottom: 90px;
         }
 
-        /* Анимация появления страниц */
-        .fade-in {
-            animation: fadeIn 0.2s ease-in-out;
+        /* HEADER SECTION */
+        header {
+            background-color: var(--primary);
+            color: white; padding: 20px 16px 30px;
+            border-bottom-left-radius: 30px; border-bottom-right-radius: 30px;
+            position: sticky; top: 0; z-index: 100;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* Заголовки */
-        h1, h2, h3 { margin: 0 0 10px 0; font-weight: 600; }
-        p { margin: 0; color: var(--hint-color); font-size: 14px; }
-
-        /* Карточки */
-        .card {
-            background-color: var(--secondary-bg);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        /* Плитки меню */
-        .menu-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 16px;
-        }
-        .menu-btn {
-            background-color: var(--secondary-bg);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 12px;
-            padding: 20px 10px;
-            text-align: center;
-            cursor: pointer;
-            transition: background 0.2s, transform 0.1s;
-        }
-        /* Эффект наведения и нажатия */
-        .menu-btn:hover { background-color: rgba(255, 255, 255, 0.05); }
-        .menu-btn:active { transform: scale(0.96); }
+        .top-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+        .back-btn { background: rgba(255,255,255,0.2); border: none; border-radius: 50%; width: 35px; height: 35px; color: white; cursor: pointer; }
         
-        .menu-btn i { font-size: 24px; display: block; margin-bottom: 8px; font-style: normal; }
-        .menu-btn span { font-size: 14px; font-weight: 500; }
-
-        /* Кнопки действий */
-        .main-button {
-            background-color: var(--accent-color);
-            color: #fff;
-            border: none;
-            border-radius: 10px;
-            padding: 14px;
-            width: 100%;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-            margin-top: 10px;
+        .search-container { position: relative; width: 100%; margin-top: -15px; padding: 0 16px; }
+        .search-input {
+            width: 100%; background: var(--surface); border: none; 
+            padding: 14px 14px 14px 45px; border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1); font-size: 15px; color: var(--text-main);
         }
-        .main-button:hover { background-color: var(--button-hover); }
-        .main-button:active { transform: scale(0.98); }
+        .search-icon { position: absolute; left: 30px; top: 14px; color: var(--text-muted); }
 
-        /* Профиль */
-        .profile-container { text-align: center; padding: 10px 0; }
-        .avatar-box {
-            width: 80px;
-            height: 80px;
-            background-color: var(--accent-color);
-            border-radius: 50%;
-            margin: 0 auto 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 32px;
-            font-weight: bold;
-            overflow: hidden;
-            border: 2px solid var(--secondary-bg);
-        }
-        .avatar-box img { width: 100%; height: 100%; object-fit: cover; }
+        /* CATEGORIES GRID */
+        .content { padding: 25px 16px 16px; }
+        .section-title { font-size: 18px; font-weight: 800; margin-bottom: 15px; display: flex; justify-content: space-between; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         
-        .user-id { font-family: monospace; color: var(--hint-color); font-size: 13px; margin-top: 4px; }
-
-        /* Список инфо в профиле */
-        .info-list { margin-top: 20px; }
-        .info-item {
-            display: flex;
-            justify-content: space-between;
-            padding: 12px 0;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            font-size: 14px;
+        .cat-card {
+            background: var(--surface); border-radius: 20px; padding: 20px;
+            text-align: center; border: 1px solid var(--border);
+            transition: transform 0.2s; position: relative;
         }
-        .info-item span:first-child { color: var(--hint-color); }
-
-        /* Навигация снизу */
-        .nav-bar {
-            position: fixed;
-            bottom: 0; left: 0; right: 0;
-            background-color: var(--secondary-bg);
-            display: flex;
-            justify-content: space-around;
-            padding: 10px 0;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 100;
+        .cat-card:active { transform: scale(0.96); }
+        .cat-icon { width: 60px; height: 60px; margin-bottom: 15px; }
+        .cat-name { font-size: 14px; font-weight: 700; line-height: 1.2; display: block; }
+        .cat-count { 
+            position: absolute; bottom: 15px; right: 15px; 
+            font-size: 12px; color: var(--primary); font-weight: bold; 
         }
-        .nav-item {
-            text-align: center;
-            color: var(--hint-color);
-            font-size: 12px;
-            cursor: pointer;
-            flex: 1;
-        }
-        .nav-item.active { color: var(--accent-color); }
-        .nav-item i { font-size: 20px; display: block; margin-bottom: 2px; font-style: normal; }
 
-        /* Управление страницами */
+        /* FILTERS (TABS) */
+        .filter-tabs {
+            display: flex; gap: 10px; overflow-x: auto; 
+            padding: 5px 16px 20px; scrollbar-width: none;
+        }
+        .filter-tabs::-webkit-scrollbar { display: none; }
+        .tab {
+            padding: 8px 20px; background: var(--surface); 
+            border: 1px solid var(--border); border-radius: 50px;
+            white-space: nowrap; font-size: 13px; font-weight: 600; cursor: pointer;
+        }
+        .tab.active { background: var(--primary); color: white; border-color: var(--primary); }
+
+        /* BOTTOM NAV */
+        .nav-bottom {
+            position: fixed; bottom: 0; width: 100%;
+            background: var(--surface); border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around; align-items: center;
+            padding: 10px 5px 25px; z-index: 1000;
+        }
+        .nav-item { text-align: center; color: var(--text-muted); cursor: pointer; flex: 1; }
+        .nav-item.active { color: var(--primary); }
+        .nav-item svg { width: 24px; height: 24px; margin-bottom: 4px; }
+        .nav-item span { font-size: 10px; font-weight: bold; display: block; }
+
+        .add-btn {
+            background: var(--accent-green); width: 55px; height: 55px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            color: white; margin-top: -40px; box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+            border: 4px solid var(--bg);
+        }
+
+        /* PAGES */
         .page { display: none; }
         .page.active { display: block; }
+
+        /* PROFILE STYLE */
+        .profile-header { text-align: center; padding: 20px; }
+        .avatar { 
+            width: 90px; height: 90px; border-radius: 30px; background: var(--primary);
+            margin: 0 auto 15px; display: flex; align-items: center; justify-content: center;
+            font-size: 32px; color: white; font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-    <!-- СТРАНИЦА: ГЛАВНАЯ (ХАБ) -->
-    <div id="home-page" class="page active fade-in">
-        <div class="card" style="text-align: center; border: none; background: transparent;">
-            <h2 id="h-welcome">Привет!</h2>
-            <p>Добро пожаловать в Prime Era Hub</p>
+    <!-- HEADER -->
+    <header id="main-header">
+        <div class="top-bar">
+            <button class="back-btn" onclick="goBack()">←</button>
+            <div style="font-weight: 800; font-size: 20px;">Каталог</div>
+            <div style="width: 35px;"></div>
         </div>
+    </header>
 
-        <div class="menu-grid">
-            <div class="menu-btn" onclick="showPage('shop')"><i>📦</i><span>Товары</span></div>
-            <div class="menu-btn" onclick="showPage('reviews')"><i>⭐</i><span>Отзывы</span></div>
-            <div class="menu-btn" onclick="openLink('https://t.me/support')"><i>💬</i><span>Поддержка</span></div>
-            <div class="menu-btn" onclick="showPage('about')"><i>ℹ️</i><span>О нас</span></div>
-        </div>
-        
-        <div class="menu-btn" style="width: 100%;" onclick="openLink('https://t.me/channel')">
-            <i>📢</i><span>Наш Telegram Канал</span>
-        </div>
+    <!-- SEARCH & FILTERS -->
+    <div class="search-container">
+        <span class="search-icon">🔍</span>
+        <input type="text" class="search-input" placeholder="Поиск плагинов и ботов..." oninput="filterSearch(this.value)">
     </div>
 
-    <!-- СТРАНИЦА: МАГАЗИН -->
-    <div id="shop-page" class="page fade-in">
-        <h3>Каталог софта</h3>
-        <div class="card">
-            <h3>Cardinal Extension</h3>
-            <p>Версия 2.1 • Самое мощное расширение для работы в браузере.</p>
-            <div style="font-size: 20px; font-weight: bold; margin-top: 15px; color: var(--accent-color);">499 ₽</div>
-            <button class="main-button" onclick="buy()">Приобрести сейчас</button>
-        </div>
-        <button class="main-button" style="background: transparent; color: var(--hint-color); border: 1px solid #333;" onclick="showPage('home')">Назад в меню</button>
+    <div class="filter-tabs" style="margin-top: 25px;">
+        <div class="tab active">Все</div>
+        <div class="tab">Боты</div>
+        <div class="tab">Плагины</div>
+        <div class="tab">Скрипты</div>
+        <div class="tab">Услуги</div>
     </div>
 
-    <!-- СТРАНИЦА: ПРОФИЛЬ -->
-    <div id="profile-page" class="page fade-in">
-        <div class="card">
-            <div class="profile-container">
-                <div id="u-avatar" class="avatar-box">?</div>
-                <h2 id="u-full-name">Имя Фамилия</h2>
-                <div class="user-id" id="u-id">ID: 00000000</div>
+    <!-- MAIN CATALOG PAGE -->
+    <div id="catalog-page" class="page active content">
+        <div class="grid">
+            <!-- Категория 1 -->
+            <div class="cat-card" onclick="openCategory('bots')">
+                <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4M8 11V9a4 4 0 018 0v2"/></svg></div>
+                <span class="cat-name">Telegram Боты</span>
+                <span class="cat-count">12</span>
             </div>
-
-            <div class="info-list">
-                <div class="info-item"><span>Статус</span><span style="color: #40b37e;">Активен</span></div>
-                <div class="info-item"><span>Username</span><span id="u-tag">@username</span></div>
-                <div class="info-item"><span>Язык</span><span id="u-lang">RU</span></div>
+            <!-- Категория 2 -->
+            <div class="cat-card" onclick="openCategory('ext')">
+                <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg></div>
+                <span class="cat-name">Расширения</span>
+                <span class="cat-count">8</span>
+            </div>
+            <!-- Категория 3 -->
+            <div class="cat-card">
+                <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg></div>
+                <span class="cat-name">Скрипты JS/Py</span>
+                <span class="cat-count">24</span>
+            </div>
+            <!-- Категория 4 -->
+            <div class="cat-card">
+                <div class="cat-icon"><svg viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
+                <span class="cat-name">Разработка</span>
+                <span class="cat-count">3</span>
             </div>
         </div>
     </div>
 
-    <!-- СТРАНИЦА: ОТЗЫВЫ -->
-    <div id="reviews-page" class="page fade-in">
-        <h3>Отзывы пользователей</h3>
-        <div class="card">
-            <p style="color: var(--accent-color); font-weight: bold;">@user_crypto</p>
-            <p style="color: var(--text-color); margin-top: 5px;">Всё работает как часы. Поддержка ответила за 5 минут.</p>
+    <!-- PROFILE PAGE -->
+    <div id="profile-page" class="page">
+        <div class="profile-header">
+            <div id="user-avatar" class="avatar">?</div>
+            <h2 id="user-name">Пользователь</h2>
+            <p id="user-id">ID: 00000000</p>
         </div>
-        <button class="main-button" style="background: transparent; color: var(--hint-color); border: 1px solid #333;" onclick="showPage('home')">Назад</button>
+        <div style="padding: 0 16px;">
+            <div class="cat-card" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                <span>Мои покупки</span>
+                <span style="color: var(--primary); font-weight: bold;">3</span>
+            </div>
+            <div class="cat-card" style="display: flex; justify-content: space-between; align-items: center;">
+                <span>Настройки</span>
+                <span>⚙️</span>
+            </div>
+        </div>
     </div>
 
-    <!-- НИЖНЯЯ НАВИГАЦИЯ -->
-    <div class="nav-bar">
-        <div class="nav-item active" id="nav-home" onclick="showPage('home')"><i>🏠</i>Главная</div>
-        <div class="nav-item" id="nav-profile" onclick="showPage('profile')"><i>👤</i>Профиль</div>
-    </div>
+    <!-- BOTTOM NAV -->
+    <nav class="nav-bottom">
+        <div class="nav-item" onclick="switchTab('home')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+            <span>Главная</span>
+        </div>
+        <div class="nav-item active" onclick="switchTab('catalog')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+            <span>Каталог</span>
+        </div>
+        <div class="add-btn" onclick="tg.showAlert('Создание заявки...')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" style="width: 28px; height: 28px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="nav-item" onclick="switchTab('profile')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <span>Профиль</span>
+        </div>
+        <div class="nav-item" onclick="openLink('https://t.me/support')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 11-7.6-10.6 8.5 8.5 0 013.1.6l5.7-2.3-2.3 5.7z"/></svg>
+            <span>Чат</span>
+        </div>
+    </nav>
 
     <script>
         const tg = window.Telegram.WebApp;
@@ -223,51 +218,48 @@
         tg.expand();
 
         // Инициализация данных пользователя
-        function initData() {
-            const user = tg.initDataUnsafe?.user;
-            if (user) {
-                document.getElementById('h-welcome').innerText = `Привет, ${user.first_name}!`;
-                document.getElementById('u-full-name').innerText = user.first_name + (user.last_name ? " " + user.last_name : "");
-                document.getElementById('u-id').innerText = "ID: " + user.id;
-                document.getElementById('u-tag').innerText = user.username ? "@" + user.username : "скрыт";
-                document.getElementById('u-lang').innerText = (user.language_code || "ru").toUpperCase();
-
-                if (user.photo_url) {
-                    document.getElementById('u-avatar').innerHTML = `<img src="${user.photo_url}">`;
-                } else {
-                    document.getElementById('u-avatar').innerText = user.first_name.charAt(0);
-                }
+        const user = tg.initDataUnsafe?.user;
+        if (user) {
+            document.getElementById('user-name').innerText = user.first_name;
+            document.getElementById('user-id').innerText = "ID: " + user.id;
+            if (user.photo_url) {
+                document.getElementById('user-avatar').innerHTML = `<img src="${user.photo_url}" style="width:100%; height:100%; border-radius:30px; object-fit:cover;">`;
+            } else {
+                document.getElementById('user-avatar').innerText = user.first_name.charAt(0);
             }
         }
 
-        // Переключение страниц
-        function showPage(pageId) {
-            // Скрываем все страницы
+        // Переключение вкладок
+        function switchTab(tab) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            // Показываем нужную
-            document.getElementById(pageId + '-page').classList.add('active');
-
-            // Обновляем навигацию снизу
-            const isProfile = pageId === 'profile';
-            document.getElementById('nav-home').classList.toggle('active', !isProfile);
-            document.getElementById('nav-profile').classList.toggle('active', isProfile);
-
-            // Виброотклик
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            
+            if (tab === 'catalog' || tab === 'home') {
+                document.getElementById('catalog-page').classList.add('active');
+                document.querySelectorAll('.nav-item')[1].classList.add('active');
+                document.getElementById('main-header').style.display = 'block';
+            } else if (tab === 'profile') {
+                document.getElementById('profile-page').classList.add('active');
+                document.querySelectorAll('.nav-item')[3].classList.add('active');
+                document.getElementById('main-header').style.display = 'none';
+            }
             tg.HapticFeedback.impactOccurred('light');
-            window.scrollTo(0,0);
+        }
+
+        // Заглушка поиска
+        function filterSearch(query) {
+            console.log("Поиск:", query);
+            // Тут можно добавить логику скрытия карточек, которые не подходят
+        }
+
+        function goBack() {
+            tg.HapticFeedback.impactOccurred('medium');
+            // Логика возврата
         }
 
         function openLink(url) {
             tg.openTelegramLink(url);
-            tg.HapticFeedback.selectionChanged();
         }
-
-        function buy() {
-            tg.sendData("buy_cardinal");
-            tg.HapticFeedback.notificationOccurred('success');
-        }
-
-        initData();
     </script>
 </body>
 </html>
