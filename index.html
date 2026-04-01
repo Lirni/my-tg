@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cardinal Store Premium</title>
+    <title>Prime Era | Premium</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
-            --primary: #6366f1;
-            --bg: #0f172a;
-            --surface: #1e293b;
-            --text: #f8fafc;
-            --hint: #94a3b8;
-            --success: #10b981;
-            --card-border: rgba(255, 255, 255, 0.08);
+            --bg: #0a0a0a;
+            --card-bg: #141414;
+            --gold: #d4af37;
+            --gold-dim: rgba(212, 175, 55, 0.3);
+            --text: #ffffff;
+            --hint: #888888;
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
@@ -23,207 +22,196 @@
             background-color: var(--bg);
             color: var(--text);
             line-height: 1.6;
-            overflow-x: hidden;
-            padding-bottom: 90px;
+            padding: 20px;
+            padding-bottom: 100px;
         }
 
-        /* Плавное появление страниц */
-        .page { display: none; opacity: 0; transform: translateY(10px); transition: all 0.3s ease; }
-        .page.active { display: block; opacity: 1; transform: translateY(0); }
+        /* Анимация */
+        .page { display: none; }
+        .page.active { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        /* HEADER */
-        .header {
-            background: linear-gradient(135deg, var(--primary) 0%, #4f46e5 100%);
-            padding: 24px 20px;
-            border-bottom-left-radius: 28px;
-            border-bottom-right-radius: 28px;
-            text-align: center;
-            margin-bottom: 24px;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        /* Тексты */
+        .brand-title { 
+            text-align: center; color: var(--gold); 
+            font-weight: 800; letter-spacing: 4px; 
+            margin-bottom: 30px; font-size: 22px;
         }
-        .header h1 { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+        .section-title { 
+            font-size: 14px; color: var(--text); 
+            font-weight: 700; text-transform: uppercase; 
+            letter-spacing: 2px; margin-bottom: 15px; 
+        }
 
-        .content { padding: 0 16px; }
+        /* Кнопки */
+        .btn-gold-outline {
+            background: transparent; border: 1px solid var(--gold);
+            color: var(--gold); padding: 12px; border-radius: 12px;
+            width: 100%; font-weight: 600; cursor: pointer;
+            transition: 0.3s; font-size: 14px;
+        }
+        .btn-gold-outline:active { background: var(--gold-dim); transform: scale(0.98); }
 
-        /* ГЛАВНЫЙ БАННЕР */
-        .hero-card {
-            background: linear-gradient(45deg, var(--surface) 0%, #2d3748 100%);
-            border-radius: 24px;
+        /* Карточки */
+        .card-premium {
+            background: var(--card-bg);
+            border: 1px solid var(--gold-dim);
+            border-radius: 20px;
             padding: 24px;
-            margin-bottom: 20px;
-            border: 1px solid var(--card-border);
-            text-align: left;
-        }
-        .hero-card h2 { font-size: 20px; margin-bottom: 8px; color: var(--success); }
-        .hero-card p { font-size: 14px; color: var(--hint); margin-bottom: 16px; }
-
-        /* ПОИСК И ТАБЫ */
-        .search-wrapper { position: relative; margin-bottom: 16px; }
-        .search-wrapper input {
-            width: 100%; padding: 14px 16px 14px 44px;
-            border-radius: 16px; border: 1px solid var(--card-border);
-            background: var(--surface); color: var(--text);
-            font-size: 15px; transition: 0.2s;
-        }
-        .search-wrapper input:focus { border-color: var(--primary); outline: none; }
-        .search-wrapper::before {
-            content: '🔍'; position: absolute; left: 16px; top: 14px; font-size: 16px; opacity: 0.6;
+            margin-bottom: 25px;
+            text-align: center;
         }
 
-        .filter-tabs {
-            display: flex; gap: 8px; overflow-x: auto;
-            margin-bottom: 20px; scrollbar-width: none;
-        }
-        .filter-tabs::-webkit-scrollbar { display: none; }
-        .filter-tab {
-            padding: 10px 18px; background: var(--surface);
-            border-radius: 50px; font-size: 13px; font-weight: 600;
-            white-space: nowrap; cursor: pointer; border: 1px solid transparent;
-            color: var(--hint); transition: 0.2s;
-        }
-        .filter-tab.active { background: var(--primary); color: white; }
-
-        /* КАТАЛОГ СЕТКА */
-        .catalog-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        /* ГРИД ТОВАРОВ */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .item-card {
-            background: var(--surface); border-radius: 20px; padding: 18px;
-            text-align: center; border: 1px solid var(--card-border);
+            background: var(--card-bg);
+            border: 1px solid var(--gold-dim);
+            border-radius: 20px;
+            padding: 20px 10px;
+            text-align: center;
             transition: 0.2s;
         }
-        .item-card:active { transform: scale(0.96); background: rgba(255,255,255,0.05); }
-        .item-card svg { width: 44px; height: 44px; margin-bottom: 12px; }
-        .item-card h3 { font-size: 14px; font-weight: 700; margin-bottom: 4px; }
-        .item-card p { font-size: 11px; color: var(--hint); margin-bottom: 10px; }
-        .item-card .price-tag { font-size: 13px; font-weight: 800; color: var(--success); }
+        .item-card:active { border-color: var(--gold); background: #1a1a1a; }
+        .item-card svg { width: 35px; height: 35px; margin-bottom: 15px; }
+        .item-card h3 { font-size: 15px; margin-bottom: 5px; }
+        .item-card p { font-size: 11px; color: var(--hint); margin-bottom: 12px; }
+        .item-card .price { color: var(--gold); font-weight: 700; font-size: 16px; }
 
-        /* ПРОФИЛЬ */
-        .profile-section { text-align: center; padding: 20px 0; }
+        /* Поиск и Табы */
+        .search-container { position: relative; margin-bottom: 20px; }
+        .search-container input {
+            width: 100%; background: #1a1a1a; border: 1px solid #333;
+            border-radius: 14px; padding: 12px 12px 12px 40px;
+            color: white; font-size: 14px;
+        }
+        .search-container::before {
+            content: '🔍'; position: absolute; left: 15px; top: 12px; opacity: 0.5;
+        }
+
+        .tabs { display: flex; gap: 10px; overflow-x: auto; margin-bottom: 25px; scrollbar-width: none; }
+        .tab {
+            padding: 8px 18px; border-radius: 50px; border: 1px solid #333;
+            color: var(--hint); font-size: 13px; white-space: nowrap; cursor: pointer;
+        }
+        .tab.active { border-color: var(--gold); color: var(--gold); }
+
+        /* Профиль */
         .avatar-wrap {
-            width: 90px; height: 90px; border-radius: 30px;
-            background: var(--primary); margin: 0 auto 16px;
+            width: 85px; height: 85px; border-radius: 50%;
+            border: 2px solid var(--gold); margin: 0 auto 15px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 36px; font-weight: bold; overflow: hidden;
-            box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+            font-size: 30px; font-weight: bold; overflow: hidden;
         }
         .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
-        
-        .user-meta { margin-bottom: 24px; }
-        .stats-row {
-            display: flex; gap: 10px; margin-top: 10px;
-        }
-        .stat-card {
-            flex: 1; background: var(--surface); padding: 15px;
-            border-radius: 16px; border: 1px solid var(--card-border);
-        }
 
-        /* НАВИГАЦИЯ */
-        .bottom-nav {
+        /* Навигация */
+        .nav-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(12px);
+            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(10px);
             display: flex; justify-content: space-around;
-            padding: 12px 10px 28px; border-top: 1px solid var(--card-border);
-            z-index: 1000;
+            padding: 15px 10px 30px; border-top: 1px solid #222;
         }
-        .nav-item {
-            text-align: center; color: var(--hint);
-            cursor: pointer; flex: 1; transition: 0.2s;
-        }
-        .nav-item.active { color: var(--primary); transform: translateY(-2px); }
-        .nav-item svg { width: 24px; height: 24px; margin-bottom: 4px; }
-        .nav-item span { font-size: 11px; font-weight: 700; display: block; }
-
-        /* Кнопка "Купить" */
-        .buy-btn {
-            width: 100%; padding: 12px; border-radius: 12px;
-            background: var(--primary); color: white; border: none;
-            font-weight: bold; cursor: pointer; margin-top: 10px;
-        }
+        .nav-item { text-align: center; color: #555; cursor: pointer; transition: 0.3s; flex: 1; }
+        .nav-item.active { color: var(--gold); }
+        .nav-item svg { width: 22px; height: 22px; margin-bottom: 4px; }
+        .nav-item span { font-size: 10px; font-weight: 700; text-transform: uppercase; display: block; }
     </style>
 </head>
 <body>
 
-    <!-- 1. ГЛАВНАЯ СТРАНИЦА -->
+    <div class="brand-title">PRIME ERA</div>
+
+    <!-- ГЛАВНАЯ -->
     <div id="home-page" class="page active">
-        <div class="header"><h1>Prime Era Hub</h1></div>
-        <div class="content">
-            <div class="hero-card">
-                <h2>Cardinal Extension v2.1</h2>
-                <p>Ультимативное решение для автоматизации ваших задач. Обновление уже доступно!</p>
-                <button class="buy-btn" onclick="switchTab('catalog')">Перейти к покупке</button>
+        <div class="card-premium">
+            <h2 style="color: var(--gold); margin-bottom: 15px;">Cardinal Extension v2.1</h2>
+            <p style="font-size: 14px; color: var(--hint); margin-bottom: 20px;">
+                Ультимативное решение для автоматизации ваших задач. Обновление уже доступно!
+            </p>
+            <button class="btn-gold-outline" onclick="switchTab('catalog')">Перейти к покупке</button>
+        </div>
+
+        <div class="section-title">Спецпредложения</div>
+        <div class="grid">
+            <div class="item-card">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M12 15l-2 5l-4-11l13 4l-5 2l7 7z"/></svg>
+                <h3 style="font-size: 14px;">VIP Статус</h3>
+                <p>НАВСЕГДА</p>
+                <div class="price">990 ₽</div>
             </div>
-            <h3 style="margin: 20px 0 10px;">Спецпредложения</h3>
-            <div class="catalog-grid">
-                <div class="item-card"><h3>VIP Статус</h3><p>Навсегда</p><div class="price-tag">990 ₽</div></div>
-                <div class="item-card"><h3>Поддержка</h3><p>Приоритет</p><div class="price-tag">290 ₽</div></div>
+            <div class="item-card">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg>
+                <h3 style="font-size: 14px;">Поддержка</h3>
+                <p>ПРИОРИТЕТ</p>
+                <div class="price">290 ₽</div>
             </div>
         </div>
     </div>
 
-    <!-- 2. КАТАЛОГ -->
+    <!-- КАТАЛОГ -->
     <div id="catalog-page" class="page">
-        <div class="header"><h1>Магазин софта</h1></div>
-        <div class="content">
-            <div class="search-wrapper">
-                <input type="text" id="searchInput" placeholder="Поиск по названию..." oninput="searchFunc()">
-            </div>
-            
-            <div class="filter-tabs">
-                <div class="filter-tab active" onclick="filterItems('all', this)">Все товары</div>
-                <div class="filter-tab" onclick="filterItems('bots', this)">Боты</div>
-                <div class="filter-tab" onclick="filterItems('ext', this)">Плагины</div>
-                <div class="filter-tab" onclick="filterItems('scripts', this)">Скрипты</div>
-            </div>
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Поиск по названию..." oninput="search()">
+        </div>
 
-            <div class="catalog-grid" id="catalogGrid">
-                <!-- Товар 1 -->
-                <div class="item-card" data-type="ext">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
-                    <h3>Cardinal Ext</h3><p>Лучший плагин</p><div class="price-tag">499 ₽</div>
-                </div>
-                <!-- Товар 2 -->
-                <div class="item-card" data-type="bots">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#6366f1" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/></svg>
-                    <h3>Spam Bot</h3><p>Для рассылок</p><div class="price-tag">750 ₽</div>
-                </div>
-                <!-- Товар 3 -->
-                <div class="item-card" data-type="scripts">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#f59e0b" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
-                    <h3>Auto Script</h3><p>Python/JS</p><div class="price-tag">300 ₽</div>
-                </div>
+        <div class="tabs">
+            <div class="tab active" onclick="filterItems('all', this)">Все товары</div>
+            <div class="tab" onclick="filterItems('bots', this)">Боты</div>
+            <div class="tab" onclick="filterItems('ext', this)">Плагины</div>
+            <div class="tab" onclick="filterItems('scripts', this)">Скрипты</div>
+        </div>
+
+        <div class="grid" id="catalogGrid">
+            <div class="item-card" data-type="ext">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                <h3>Cardinal Ext</h3>
+                <p>Лучший плагин</p>
+                <div class="price">499 ₽</div>
+            </div>
+            <div class="item-card" data-type="bots">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/></svg>
+                <h3>Spam Bot</h3>
+                <p>Для рассылок</p>
+                <div class="price">750 ₽</div>
+            </div>
+            <div class="item-card" data-type="scripts">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+                <h3>Auto Script</h3>
+                <p>Python/JS</p>
+                <div class="price">300 ₽</div>
+            </div>
+            <div class="item-card" data-type="bots">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 11-7.6-10.6 8.5 8.5 0 013.1.6l5.7-2.3-2.3 5.7z"/></svg>
+                <h3>Telegram Bot</h3>
+                <p>Универсальный бот</p>
+                <div class="price">1200 ₽</div>
             </div>
         </div>
     </div>
 
-    <!-- 3. ПРОФИЛЬ -->
+    <!-- ПРОФИЛЬ -->
     <div id="profile-page" class="page">
-        <div class="header"><h1>Личный кабинет</h1></div>
-        <div class="content">
-            <div class="profile-section">
-                <div id="u-avatar" class="avatar-wrap">?</div>
-                <h2 id="u-name">Пользователь</h2>
-                <p id="u-id" style="color: var(--hint);">ID: 00000000</p>
+        <div class="card-premium">
+            <div id="u-avatar" class="avatar-wrap">?</div>
+            <h2 id="u-name" style="margin-bottom: 5px;">Пользователь</h2>
+            <p id="u-id" style="color: var(--hint); font-size: 13px; margin-bottom: 20px;">ID: 00000000</p>
+            <div style="display: flex; gap: 10px;">
+                <div style="flex: 1; background: #1a1a1a; padding: 10px; border-radius: 12px; border: 1px solid #333;">
+                    <div style="font-size: 10px; color: var(--hint);">ПОКУПОК</div>
+                    <div style="font-weight: bold; color: var(--gold);">0</div>
+                </div>
+                <div style="flex: 1; background: #1a1a1a; padding: 10px; border-radius: 12px; border: 1px solid #333;">
+                    <div style="font-size: 10px; color: var(--hint);">РАНГ</div>
+                    <div style="font-weight: bold; color: var(--gold);">NEW</div>
+                </div>
             </div>
-            <div class="stats-row">
-                <div class="stat-card"><span>Покупки</span><h2 style="color: var(--primary);">0</h2></div>
-                <div class="stat-card"><span>Баланс</span><h2 style="color: var(--success);">0 ₽</h2></div>
-            </div>
-            <button class="buy-btn" style="background: var(--surface); color: var(--text); margin-top: 20px;" onclick="tg.openTelegramLink('https://t.me/your_channel')">Наш канал</button>
         </div>
+        <button class="btn-gold-outline" onclick="tg.openTelegramLink('https://t.me/your_support')">Связаться с владельцем</button>
     </div>
 
-    <!-- 4. ЧАТ -->
-    <div id="chat-page" class="page">
-        <div class="header"><h1>Поддержка</h1></div>
-        <div class="content" style="text-align: center; padding-top: 40px;">
-            <div style="font-size: 60px; margin-bottom: 20px;">👨‍💻</div>
-            <h3>Нужна помощь?</h3>
-            <p style="margin-bottom: 25px;">Наши специалисты ответят на любые вопросы по работе софта.</p>
-            <button class="buy-btn" onclick="tg.openTelegramLink('https://t.me/your_support')">Связаться с саппортом</button>
-        </div>
-    </div>
-
-    <!-- NIZHNYAYA NAVIGACIYA -->
-    <div class="bottom-nav">
+    <!-- НАВИГАЦИЯ -->
+    <div class="nav-bar">
         <div class="nav-item active" id="nav-home" onclick="switchTab('home')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
             <span>Главная</span>
@@ -236,7 +224,7 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
             <span>Профиль</span>
         </div>
-        <div class="nav-item" id="nav-chat" onclick="switchTab('chat')">
+        <div class="nav-item" onclick="tg.openTelegramLink('https://t.me/your_support')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 11-7.6-10.6 8.5 8.5 0 013.1.6l5.7-2.3-2.3 5.7z"/></svg>
             <span>Чат</span>
         </div>
@@ -247,19 +235,18 @@
         tg.ready();
         tg.expand();
 
-        // Переключение страниц
         function switchTab(pageId) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.getElementById(pageId + '-page').classList.add('active');
 
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            document.getElementById('nav-' + pageId).classList.add('active');
+            const activeNav = document.getElementById('nav-' + pageId);
+            if (activeNav) activeNav.classList.add('active');
             
             tg.HapticFeedback.impactOccurred('light');
         }
 
-        // Поиск
-        function searchFunc() {
+        function search() {
             let val = document.getElementById('searchInput').value.toLowerCase();
             let cards = document.querySelectorAll('#catalogGrid .item-card');
             cards.forEach(card => {
@@ -268,9 +255,8 @@
             });
         }
 
-        // Фильтрация
         function filterItems(type, el) {
-            document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
             el.classList.add('active');
             let cards = document.querySelectorAll('#catalogGrid .item-card');
             cards.forEach(card => {
@@ -283,7 +269,6 @@
             tg.HapticFeedback.selectionChanged();
         }
 
-        // Данные пользователя
         const user = tg.initDataUnsafe?.user;
         if (user) {
             document.getElementById('u-name').innerText = user.first_name;
