@@ -3,239 +3,254 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Prime Era | Premium Gold</title>
+    <title>Cardinal Prime Era | React Version</title>
+
+    <!-- Подключаем необходимые библиотеки -->
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/framer-motion@10.16.4/dist/framer-motion.js"></script>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
+
     <style>
+        /* Кастомные настройки темы из твоего решения */
         :root {
-            --bg: #0a0a0a;
-            --card-bg: rgba(20, 20, 20, 0.7);
             --gold: #d4af37;
-            --gold-dim: rgba(212, 175, 55, 0.2);
-            --text: #ffffff;
-            --hint: #888888;
+            --gold-light: #f9e29c;
+            --dark-bg: #0a0a0a;
+            --card-bg: rgba(30, 30, 30, 0.6);
+            --border-gold: rgba(212, 175, 55, 0.3);
         }
 
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; margin: 0; padding: 0; }
-        
         body {
-            font-family: 'Inter', -apple-system, sans-serif;
-            background-color: var(--bg);
-            /* ЭФФЕКТ СВЕЧЕНИЯ СВЕРХУ */
-            background-image: radial-gradient(circle at 50% -10%, rgba(212, 175, 55, 0.15) 0%, rgba(10, 10, 10, 0) 70%);
+            background-color: #0a0a0a;
+            color: white;
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-image: 
+                radial-gradient(circle at 50% -20%, rgba(212, 175, 55, 0.15), transparent 70%);
             background-attachment: fixed;
-            color: var(--text);
-            line-height: 1.6;
-            padding: 20px;
-            padding-bottom: 100px;
-            min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        /* Анимация страниц */
-        .page { display: none; opacity: 0; }
-        .page.active { display: block; animation: fadeIn 0.4s forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        .brand-title { 
-            text-align: center; color: var(--gold); 
-            font-weight: 800; letter-spacing: 5px; 
-            margin-bottom: 30px; font-size: 20px;
-        }
-
-        /* Карточки */
-        .card-premium {
+        .glass-card {
             background: var(--card-bg);
-            border: 1px solid rgba(212, 175, 55, 0.15);
-            border-radius: 24px;
-            padding: 25px;
-            margin-bottom: 25px;
-            backdrop-filter: blur(10px);
-            text-align: center;
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-gold);
+            border-radius: 1.5rem;
+            overflow: hidden;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
         }
 
-        .btn-gold-outline {
-            background: transparent; border: 1px solid var(--gold);
-            color: var(--gold); padding: 12px; border-radius: 12px;
-            width: 100%; font-weight: 700; cursor: pointer;
-            text-transform: uppercase; font-size: 13px; letter-spacing: 1px;
+        .gold-text {
+            background: linear-gradient(to bottom, var(--gold-light), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
         }
 
-        /* Сетка товаров */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .item-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(212, 175, 55, 0.1);
-            border-radius: 20px;
-            padding: 20px 10px;
-            text-align: center;
-            backdrop-filter: blur(5px);
-        }
-        .item-card h3 { font-size: 14px; margin-bottom: 5px; }
-        .item-card p { font-size: 10px; color: var(--hint); text-transform: uppercase; margin-bottom: 10px; }
-        .item-card .price { color: var(--gold); font-weight: 800; font-size: 16px; }
+        /* Убираем скроллбар */
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Поиск */
-        .search-container { position: relative; margin-bottom: 20px; }
-        .search-container input {
-            width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #222;
-            border-radius: 15px; padding: 12px 12px 12px 40px; color: white;
-        }
-        .search-container::before { content: '🔍'; position: absolute; left: 15px; top: 12px; opacity: 0.4; }
-
-        /* Профиль */
-        .avatar-wrap {
-            width: 80px; height: 80px; border-radius: 50%;
-            border: 2px solid var(--gold); margin: 0 auto 15px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 30px; font-weight: bold; overflow: hidden;
-        }
-        .avatar-wrap img { width: 100%; height: 100%; object-fit: cover; }
-
-        /* Навигация */
-        .nav-bar {
-            position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(15px);
-            display: flex; justify-content: space-around;
-            padding: 15px 10px 30px; border-top: 1px solid #1a1a1a;
-            z-index: 1000;
-        }
-        .nav-item { text-align: center; color: #444; cursor: pointer; flex: 1; }
-        .nav-item.active { color: var(--gold); }
-        .nav-item svg { width: 22px; height: 22px; margin-bottom: 5px; }
-        .nav-item span { font-size: 10px; font-weight: 700; text-transform: uppercase; display: block; }
+        /* Кастомный скроллбар для страницы */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: #0a0a0a; }
+        ::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 10px; }
     </style>
 </head>
 <body>
+    <div id="root"></div>
 
-    <div class="brand-title">PRIME ERA</div>
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+        const { motion, AnimatePresence } = window.Motion;
 
-    <!-- 1. ГЛАВНАЯ -->
-    <div id="home-page" class="page active">
-        <div class="card-premium">
-            <h2 style="color: var(--gold); margin-bottom: 10px;">Cardinal Extension v2.1</h2>
-            <p style="font-size: 13px; color: var(--hint); margin-bottom: 20px;">Ультимативное решение для автоматизации ваших задач.</p>
-            <button class="btn-gold-outline" onclick="switchTab('catalog')">Перейти к покупке</button>
-        </div>
+        // --- Переменные иконок (т.к. Lucide в React CDN работает через теги) ---
+        const Icon = ({ name, size = 20, className = "" }) => {
+            useEffect(() => { lucide.createIcons(); }, [name]);
+            return <i data-lucide={name} style={{width: size, height: size}} className={className}></i>;
+        };
 
-        <p style="font-size: 11px; letter-spacing: 2px; color: white; margin-bottom: 15px; font-weight: bold; text-transform: uppercase;">Спецпредложения</p>
-        <div class="grid">
-            <div class="item-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M12 15l-2 5l-4-11l13 4l-5 2l7 7z"/></svg>
-                <h3>VIP Статус</h3>
-                <p>Навсегда</p>
-                <div class="price">990 ₽</div>
-            </div>
-            <div class="item-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3z"/></svg>
-                <h3>Поддержка</h3>
-                <p>Приоритет</p>
-                <div class="price">290 ₽</div>
-            </div>
-        </div>
-    </div>
+        // --- Компоненты ---
 
-    <!-- 2. КАТАЛОГ -->
-    <div id="catalog-page" class="page">
-        <div class="search-container">
-            <input type="text" placeholder="Поиск по названию...">
-        </div>
-        <div class="grid">
-            <div class="item-card">
-                <h3>Cardinal Ext</h3>
-                <p>Плагин</p>
-                <div class="price">499 ₽</div>
-            </div>
-            <div class="item-card">
-                <h3>Spam Bot</h3>
-                <p>Софт</p>
-                <div class="price">750 ₽</div>
-            </div>
-            <div class="item-card">
-                <h3>Auto Script</h3>
-                <p>Скрипт</p>
-                <div class="price">300 ₽</div>
-            </div>
-            <div class="item-card">
-                <h3>Support Bot</h3>
-                <p>Бот</p>
-                <div class="price">1200 ₽</div>
-            </div>
-        </div>
-    </div>
+        const BottomNav = ({ activeTab, setActiveTab }) => {
+            const tabs = [
+                { id: 'home', icon: 'home', label: 'Главная' },
+                { id: 'catalog', icon: 'layout-grid', label: 'Каталог' },
+                { id: 'profile', icon: 'user', label: 'Профиль' },
+                { id: 'chat', icon: 'message-circle', label: 'Чат' },
+            ];
 
-    <!-- 3. ПРОФИЛЬ -->
-    <div id="profile-page" class="page">
-        <div class="card-premium">
-            <div id="u-avatar" class="avatar-wrap">?</div>
-            <h2 id="u-name">Пользователь</h2>
-            <p id="u-id" style="color: var(--hint); font-size: 13px; margin-bottom: 15px;">ID: 00000000</p>
-            <div style="display: flex; gap: 10px;">
-                <div style="flex: 1; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; border: 1px solid #222;">
-                    <div style="font-size: 10px; color: var(--hint);">РАНГ</div>
-                    <div style="font-weight: bold; color: var(--gold);">NEW</div>
+            return (
+                <nav className="fixed bottom-0 left-0 right-0 glass-card rounded-none border-t border-[rgba(212,175,55,0.3)] py-3 px-6 flex justify-between items-center z-50">
+                    {tabs.map((tab) => (
+                        <button
+                            key={tab.id}
+                            onClick={() => setActiveTab(tab.id)}
+                            className={`flex flex-col items-center gap-1 transition-all duration-300 ${
+                                activeTab === tab.id ? 'text-[#d4af37] scale-110' : 'text-gray-500'
+                            }`}
+                        >
+                            <Icon name={tab.icon} size={20} className={activeTab === tab.id ? 'drop-shadow-[0_0_5px_rgba(212,175,55,0.5)]' : ''} />
+                            <span className="text-[10px] uppercase tracking-wider font-medium">{tab.label}</span>
+                        </button>
+                    ))}
+                </nav>
+            );
+        };
+
+        const Header = ({ title, showSearch }) => (
+            <header className="pt-8 pb-4 px-6 flex justify-between items-center sticky top-0 bg-[#0a0a0a]/80 backdrop-blur-sm z-40">
+                {showSearch ? <Icon name="search" size={24} className="text-[#d4af37]" /> : <div className="w-6" />}
+                <h1 className="text-xl font-bold tracking-[0.2em] uppercase gold-text mx-auto">{title}</h1>
+                <div className="w-6" />
+            </header>
+        );
+
+        // --- Экраны ---
+
+        const HomeScreen = () => (
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="px-6 pb-24 space-y-8">
+                <div className="glass-card p-6 space-y-4 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-[#d4af37]/5 blur-3xl rounded-full -mr-16 -mt-16" />
+                    <h2 className="text-2xl font-bold gold-text">Cardinal Extension v2.1</h2>
+                    <p className="text-sm text-gray-400 leading-relaxed">
+                        Ультимативное решение для автоматизации ваших задач. Обновление уже доступно!
+                    </p>
+                    <button className="w-full py-3 rounded-xl border border-[#d4af37]/50 bg-[#d4af37]/5 text-[#d4af37] font-bold text-sm hover:bg-[#d4af37]/10 transition-colors">
+                        Перейти к покупке
+                    </button>
                 </div>
-                <div style="flex: 1; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; border: 1px solid #222;">
-                    <div style="font-size: 10px; color: var(--hint);">ОПЛАТ</div>
-                    <div style="font-weight: bold; color: var(--gold);">0</div>
+
+                <div className="space-y-4">
+                    <h3 className="text-lg font-bold tracking-wider uppercase text-gray-200">Спецпредложения</h3>
+                    <div className="grid grid-cols-2 gap-4">
+                        <div className="glass-card p-6 flex flex-col items-center text-center gap-3">
+                            <div className="p-3 rounded-full bg-[#d4af37]/10 text-[#d4af37]"><Icon name="crown" size={32} /></div>
+                            <div className="font-bold text-sm">VIP Статус</div>
+                            <div className="text-[#d4af37] font-bold">990 ₽</div>
+                        </div>
+                        <div className="glass-card p-6 flex flex-col items-center text-center gap-3">
+                            <div className="p-3 rounded-full bg-[#d4af37]/10 text-[#d4af37]"><Icon name="headphones" size={32} /></div>
+                            <div className="font-bold text-sm">Поддержка</div>
+                            <div className="text-[#d4af37] font-bold">290 ₽</div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-    </div>
+                <div className="text-center text-[10px] text-gray-600 tracking-widest uppercase pb-4">@sellpip_bot</div>
+            </motion.div>
+        );
 
-    <!-- 4. ЧАТ (ОСТАВЛЕНО ДЛЯ ТВОЕГО КОДА) -->
-    <div id="chat-page" class="page">
-        <!-- Вставь свой код чата сюда -->
-    </div>
+        const CatalogScreen = () => {
+            const [selectedCategory, setSelectedCategory] = useState('Все товары');
+            const [searchQuery, setSearchQuery] = useState('');
+            const categories = ['Все товары', 'Боты', 'Плагины', 'Скрипты'];
+            const items = [
+                { id: 1, name: 'Cardinal Ext', category: 'Плагины', price: 499, desc: 'Лучший плагин', icon: 'shield' },
+                { id: 2, name: 'Spam Bot', category: 'Боты', price: 750, desc: 'Для рассылок', icon: 'mail' },
+                { id: 3, name: 'Auto Script', category: 'Скрипты', price: 300, desc: 'Python/JS', icon: 'code', full: true },
+                { id: 4, name: 'Telegram Bot', category: 'Боты', price: 1200, desc: 'Универсальный бот', icon: 'message-circle' },
+                { id: 5, name: 'SEO Plugin', category: 'Плагины', price: 550, desc: 'Для оптимизации', icon: 'layout-grid' },
+            ];
 
-    <!-- НАВИГАЦИЯ -->
-    <div class="nav-bar">
-        <div class="nav-item active" id="nav-home" onclick="switchTab('home')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
-            <span>Главная</span>
-        </div>
-        <div class="nav-item" id="nav-catalog" onclick="switchTab('catalog')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-            <span>Каталог</span>
-        </div>
-        <div class="nav-item" id="nav-profile" onclick="switchTab('profile')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-            <span>Профиль</span>
-        </div>
-        <div class="nav-item" id="nav-chat" onclick="switchTab('chat')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 11-7.6-10.6 8.5 8.5 0 013.1.6l5.7-2.3-2.3 5.7z"/></svg>
-            <span>Чат</span>
-        </div>
-    </div>
+            const filtered = items.filter(i => 
+                (selectedCategory === 'Все товары' || i.category === selectedCategory) &&
+                i.name.toLowerCase().includes(searchQuery.toLowerCase())
+            );
 
-    <script>
-        const tg = window.Telegram.WebApp;
-        tg.ready();
-        tg.expand();
+            return (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pb-24 space-y-6">
+                    <div className="relative">
+                        <input 
+                            type="text" placeholder="Поиск по названию..." 
+                            value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
+                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-sm focus:border-[#d4af37]/50 outline-none"
+                        />
+                        <div className="absolute left-3 top-3.5 opacity-40"><Icon name="search" size={18} /></div>
+                    </div>
+                    <div className="flex gap-2 overflow-x-auto no-scrollbar">
+                        {categories.map(c => (
+                            <button key={c} onClick={() => setSelectedCategory(c)} className={`px-4 py-2 rounded-full text-xs whitespace-nowrap border ${selectedCategory === c ? 'bg-[#d4af37]/10 border-[#d4af37] text-[#d4af37]' : 'bg-white/5 border-white/10 text-gray-400'}`}>{c}</button>
+                        ))}
+                    </div>
+                    <div className="grid grid-cols-2 gap-4">
+                        {filtered.map(item => (
+                            <div key={item.id} className={`glass-card p-4 flex flex-col items-center text-center gap-3 ${item.full ? 'col-span-2' : ''}`}>
+                                <div className="p-3 rounded-xl bg-[#d4af37]/5 text-[#d4af37]"><Icon name={item.icon} size={28} /></div>
+                                <div><div className="font-bold text-sm">{item.name}</div><div className="text-[10px] text-gray-500">{item.desc}</div></div>
+                                <div className="text-[#d4af37] font-bold">{item.price} ₽</div>
+                            </div>
+                        ))}
+                    </div>
+                </motion.div>
+            );
+        };
 
-        function switchTab(pageId) {
-            // Убираем активный класс у всех страниц
-            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            // Показываем нужную
-            document.getElementById(pageId + '-page').classList.add('active');
+        const ProfileScreen = ({ user }) => (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="px-6 pb-24 space-y-8">
+                <div className="flex flex-col items-center gap-4 py-4">
+                    <div className="w-24 h-24 rounded-3xl overflow-hidden border-2 border-[#d4af37]/30 p-1">
+                        <img src={user?.photo_url || "https://picsum.photos/seed/user/200"} className="w-full h-full object-cover rounded-2xl" />
+                    </div>
+                    <div className="text-center">
+                        <div className="text-xl font-bold gold-text">{user?.first_name || "Пользователь"}</div>
+                        <div className="text-xs text-gray-500 mt-1">ID: {user?.id || "00000000"}</div>
+                    </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    <div className="glass-card p-5"><div className="text-[10px] text-gray-500 uppercase font-bold">Покупки</div><div className="text-2xl font-bold">0</div></div>
+                    <div className="glass-card p-5"><div className="text-[10px] text-gray-500 uppercase font-bold">Баланс</div><div className="text-2xl font-bold">0 ₽</div></div>
+                </div>
+            </motion.div>
+        );
 
-            // Обновляем кнопки навигации
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            const activeNav = document.getElementById('nav-' + pageId);
-            if (activeNav) activeNav.classList.add('active');
-            
-            tg.HapticFeedback.impactOccurred('light');
+        const ChatScreen = () => (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex flex-col h-[70vh] px-6">
+                <div className="flex-1 flex flex-col items-center justify-center gap-8">
+                    <img src="https://img.freepik.com/free-vector/robot-with-headphones-listening-music_23-2148505537.jpg" className="w-48 h-48 object-contain drop-shadow-[0_0_20px_rgba(212,175,55,0.3)]" />
+                    <div className="glass-card p-4 relative"><p className="text-sm font-medium">Чем могу помочь?</p></div>
+                </div>
+                <div className="flex items-center gap-2">
+                    <input type="text" placeholder="Введите сообщение..." className="flex-1 bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-sm focus:border-[#d4af37]/50 outline-none" />
+                    <button className="p-4 rounded-xl bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37]"><Icon name="send" size={20} /></button>
+                </div>
+            </motion.div>
+        );
+
+        // --- Главное приложение ---
+
+        function App() {
+            const [activeTab, setActiveTab] = useState('home');
+            const [userData, setUserData] = useState(null);
+
+            useEffect(() => {
+                if (window.Telegram && window.Telegram.WebApp) {
+                    const tg = window.Telegram.WebApp;
+                    tg.ready();
+                    tg.expand();
+                    setUserData(tg.initDataUnsafe?.user);
+                }
+            }, []);
+
+            return (
+                <div className="min-h-screen relative">
+                    <Header title={activeTab === 'home' ? 'Prime Era' : activeTab === 'catalog' ? 'Каталог' : activeTab === 'profile' ? 'Профиль' : 'Чат'} showSearch={activeTab === 'catalog'} />
+                    <main className="relative z-10">
+                        {activeTab === 'home' && <HomeScreen />}
+                        {activeTab === 'catalog' && <CatalogScreen />}
+                        {activeTab === 'profile' && <ProfileScreen user={userData} />}
+                        {activeTab === 'chat' && <ChatScreen />}
+                    </main>
+                    <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+                </div>
+            );
         }
 
-        // Парсинг данных пользователя
-        const user = tg.initDataUnsafe?.user;
-        if (user) {
-            document.getElementById('u-name').innerText = user.first_name.toLowerCase();
-            document.getElementById('u-id').innerText = "ID: " + user.id;
-            if (user.photo_url) {
-                document.getElementById('u-avatar').innerHTML = `<img src="${user.photo_url}">`;
-            } else {
-                document.getElementById('u-avatar').innerText = user.first_name.charAt(0);
-            }
-        }
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
     </script>
 </body>
 </html>
