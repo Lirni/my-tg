@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Prime Era | Premium Glow</title>
+    <title>Prime Era | Premium Gold</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         :root {
             --bg: #0a0a0a;
-            --card-bg: rgba(20, 20, 20, 0.6);
+            --card-bg: rgba(20, 20, 20, 0.7);
             --gold: #d4af37;
             --gold-dim: rgba(212, 175, 55, 0.2);
             --text: #ffffff;
@@ -20,26 +20,25 @@
         body {
             font-family: 'Inter', -apple-system, sans-serif;
             background-color: var(--bg);
-            /* ТО САМОЕ СВЕЧЕНИЕ СВЕРХУ - УСИЛЕННОЕ */
-            background-image: radial-gradient(circle at 50% -10%, rgba(212, 175, 55, 0.18) 0%, rgba(10, 10, 10, 0) 70%);
+            /* ЭФФЕКТ СВЕЧЕНИЯ СВЕРХУ */
+            background-image: radial-gradient(circle at 50% -10%, rgba(212, 175, 55, 0.15) 0%, rgba(10, 10, 10, 0) 70%);
             background-attachment: fixed;
             color: var(--text);
             line-height: 1.6;
             padding: 20px;
-            padding-bottom: 110px;
+            padding-bottom: 100px;
             min-height: 100vh;
         }
 
-        /* Анимация перехода */
-        .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.4s ease; }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        /* Анимация страниц */
+        .page { display: none; opacity: 0; }
+        .page.active { display: block; animation: fadeIn 0.4s forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
         .brand-title { 
             text-align: center; color: var(--gold); 
             font-weight: 800; letter-spacing: 5px; 
             margin-bottom: 30px; font-size: 20px;
-            text-shadow: 0 0 15px rgba(212, 175, 55, 0.3);
         }
 
         /* Карточки */
@@ -49,15 +48,15 @@
             border-radius: 24px;
             padding: 25px;
             margin-bottom: 25px;
-            backdrop-filter: blur(15px); /* Эффект стекла */
+            backdrop-filter: blur(10px);
             text-align: center;
         }
 
-        .btn-gold {
+        .btn-gold-outline {
             background: transparent; border: 1px solid var(--gold);
-            color: var(--gold); padding: 14px; border-radius: 14px;
+            color: var(--gold); padding: 12px; border-radius: 12px;
             width: 100%; font-weight: 700; cursor: pointer;
-            text-transform: uppercase; letter-spacing: 1px; font-size: 13px;
+            text-transform: uppercase; font-size: 13px; letter-spacing: 1px;
         }
 
         /* Сетка товаров */
@@ -71,15 +70,16 @@
             backdrop-filter: blur(5px);
         }
         .item-card h3 { font-size: 14px; margin-bottom: 5px; }
-        .item-card .price { color: var(--gold); font-weight: 800; }
+        .item-card p { font-size: 10px; color: var(--hint); text-transform: uppercase; margin-bottom: 10px; }
+        .item-card .price { color: var(--gold); font-weight: 800; font-size: 16px; }
 
         /* Поиск */
-        .search-container { position: relative; margin-bottom: 25px; }
+        .search-container { position: relative; margin-bottom: 20px; }
         .search-container input {
             width: 100%; background: rgba(255,255,255,0.05); border: 1px solid #222;
-            border-radius: 15px; padding: 12px 12px 12px 45px; color: white;
+            border-radius: 15px; padding: 12px 12px 12px 40px; color: white;
         }
-        .search-container::before { content: '🔍'; position: absolute; left: 18px; top: 12px; opacity: 0.4; }
+        .search-container::before { content: '🔍'; position: absolute; left: 15px; top: 12px; opacity: 0.4; }
 
         /* Профиль */
         .avatar-wrap {
@@ -93,45 +93,47 @@
         /* Навигация */
         .nav-bar {
             position: fixed; bottom: 0; left: 0; right: 0;
-            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(20px);
+            background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(15px);
             display: flex; justify-content: space-around;
-            padding: 15px 10px 30px; border-top: 1px solid rgba(255,255,255,0.05);
+            padding: 15px 10px 30px; border-top: 1px solid #1a1a1a;
             z-index: 1000;
         }
-        .nav-item { text-align: center; color: #444; cursor: pointer; flex: 1; transition: 0.3s; }
+        .nav-item { text-align: center; color: #444; cursor: pointer; flex: 1; }
         .nav-item.active { color: var(--gold); }
         .nav-item svg { width: 22px; height: 22px; margin-bottom: 5px; }
-        .nav-item span { font-size: 10px; font-weight: 700; text-transform: uppercase; display: block; letter-spacing: 1px; }
+        .nav-item span { font-size: 10px; font-weight: 700; text-transform: uppercase; display: block; }
     </style>
 </head>
 <body>
 
     <div class="brand-title">PRIME ERA</div>
 
-    <!-- ГЛАВНАЯ -->
+    <!-- 1. ГЛАВНАЯ -->
     <div id="home-page" class="page active">
         <div class="card-premium">
-            <h2 style="color: var(--gold); margin-bottom: 15px;">Cardinal Extension v2.1</h2>
-            <p style="font-size: 14px; color: var(--hint); margin-bottom: 25px;">Ультимативное решение для автоматизации ваших задач.</p>
-            <button class="btn-gold" onclick="switchTab('catalog')">Перейти к покупке</button>
+            <h2 style="color: var(--gold); margin-bottom: 10px;">Cardinal Extension v2.1</h2>
+            <p style="font-size: 13px; color: var(--hint); margin-bottom: 20px;">Ультимативное решение для автоматизации ваших задач.</p>
+            <button class="btn-gold-outline" onclick="switchTab('catalog')">Перейти к покупке</button>
         </div>
 
-        <p style="font-size: 12px; letter-spacing: 2px; color: white; margin-bottom: 15px; font-weight: bold;">СПЕЦПРЕДЛОЖЕНИЯ</p>
+        <p style="font-size: 11px; letter-spacing: 2px; color: white; margin-bottom: 15px; font-weight: bold; text-transform: uppercase;">Спецпредложения</p>
         <div class="grid">
             <div class="item-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.2"><path d="M12 15l-2 5l-4-11l13 4l-5 2l7 7z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M12 15l-2 5l-4-11l13 4l-5 2l7 7z"/></svg>
                 <h3>VIP Статус</h3>
+                <p>Навсегда</p>
                 <div class="price">990 ₽</div>
             </div>
             <div class="item-card">
-                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.2"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3z"/></svg>
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="1.5"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3z"/></svg>
                 <h3>Поддержка</h3>
+                <p>Приоритет</p>
                 <div class="price">290 ₽</div>
             </div>
         </div>
     </div>
 
-    <!-- КАТАЛОГ -->
+    <!-- 2. КАТАЛОГ -->
     <div id="catalog-page" class="page">
         <div class="search-container">
             <input type="text" placeholder="Поиск по названию...">
@@ -139,27 +141,49 @@
         <div class="grid">
             <div class="item-card">
                 <h3>Cardinal Ext</h3>
+                <p>Плагин</p>
                 <div class="price">499 ₽</div>
             </div>
             <div class="item-card">
                 <h3>Spam Bot</h3>
+                <p>Софт</p>
                 <div class="price">750 ₽</div>
+            </div>
+            <div class="item-card">
+                <h3>Auto Script</h3>
+                <p>Скрипт</p>
+                <div class="price">300 ₽</div>
+            </div>
+            <div class="item-card">
+                <h3>Support Bot</h3>
+                <p>Бот</p>
+                <div class="price">1200 ₽</div>
             </div>
         </div>
     </div>
 
-    <!-- ПРОФИЛЬ -->
+    <!-- 3. ПРОФИЛЬ -->
     <div id="profile-page" class="page">
         <div class="card-premium">
             <div id="u-avatar" class="avatar-wrap">?</div>
             <h2 id="u-name">Пользователь</h2>
-            <p id="u-id" style="color: var(--hint); font-size: 13px;">ID: 00000000</p>
+            <p id="u-id" style="color: var(--hint); font-size: 13px; margin-bottom: 15px;">ID: 00000000</p>
+            <div style="display: flex; gap: 10px;">
+                <div style="flex: 1; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; border: 1px solid #222;">
+                    <div style="font-size: 10px; color: var(--hint);">РАНГ</div>
+                    <div style="font-weight: bold; color: var(--gold);">NEW</div>
+                </div>
+                <div style="flex: 1; background: rgba(255,255,255,0.03); padding: 10px; border-radius: 12px; border: 1px solid #222;">
+                    <div style="font-size: 10px; color: var(--hint);">ОПЛАТ</div>
+                    <div style="font-weight: bold; color: var(--gold);">0</div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- ЧАТ (СЮДА ВКЛЕИВАЙ СВОЙ КОД) -->
+    <!-- 4. ЧАТ (ОСТАВЛЕНО ДЛЯ ТВОЕГО КОДА) -->
     <div id="chat-page" class="page">
-        <!-- Твой будущий код чата здесь -->
+        <!-- Вставь свой код чата сюда -->
     </div>
 
     <!-- НАВИГАЦИЯ -->
@@ -188,9 +212,12 @@
         tg.expand();
 
         function switchTab(pageId) {
+            // Убираем активный класс у всех страниц
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            // Показываем нужную
             document.getElementById(pageId + '-page').classList.add('active');
 
+            // Обновляем кнопки навигации
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             const activeNav = document.getElementById('nav-' + pageId);
             if (activeNav) activeNav.classList.add('active');
@@ -198,9 +225,10 @@
             tg.HapticFeedback.impactOccurred('light');
         }
 
+        // Парсинг данных пользователя
         const user = tg.initDataUnsafe?.user;
         if (user) {
-            document.getElementById('u-name').innerText = user.first_name;
+            document.getElementById('u-name').innerText = user.first_name.toLowerCase();
             document.getElementById('u-id').innerText = "ID: " + user.id;
             if (user.photo_url) {
                 document.getElementById('u-avatar').innerHTML = `<img src="${user.photo_url}">`;
