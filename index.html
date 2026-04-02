@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cardinal Prime Era | Ultra Fixed</title>
+    <title>Cardinal Prime Era | Scroll Fixed</title>
 
-    <!-- Библиотеки -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -25,12 +24,16 @@
             background-color: #0a0a0a;
             color: white;
             margin: 0;
+            padding: 0;
             font-family: 'Inter', -apple-system, sans-serif;
             background-image: 
                 radial-gradient(circle at 50% -20%, rgba(212, 175, 55, 0.15), transparent 70%),
                 url('https://www.transparenttextures.com/patterns/dark-matter.png');
             background-attachment: fixed;
-            overflow: hidden; /* Фикс для предотвращения прыжков при анимации */
+            /* ИСПРАВЛЕНИЕ СКРОЛЛА */
+            overflow-x: hidden;
+            overflow-y: auto; 
+            min-height: 100vh;
         }
 
         .glass-card {
@@ -48,6 +51,9 @@
             font-weight: bold;
         }
 
+        /* Плавный скролл для iOS */
+        * { -webkit-overflow-scrolling: touch; }
+
         .no-scrollbar::-webkit-scrollbar { display: none; }
         ::-webkit-scrollbar { width: 4px; }
         ::-webkit-scrollbar-track { background: #0a0a0a; }
@@ -60,10 +66,9 @@
     <div id="root"></div>
 
     <script type="text/babel">
-        const { useState, useEffect, useMemo } = React;
+        const { useState, useEffect } = React;
         const { motion, AnimatePresence } = window.Motion;
 
-        // --- Icon Component ---
         const Icon = ({ name, size = 20, className = "" }) => {
             useEffect(() => { if(window.lucide) lucide.createIcons(); }, [name]);
             return <i data-lucide={name} style={{width: size, height: size}} className={`lucide ${className}`}></i>;
@@ -76,20 +81,19 @@
                 <div className="glass-card p-6 space-y-4 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#d4af37]/5 blur-3xl rounded-full -mr-16 -mt-16" />
                     <h2 className="text-2xl font-bold gold-text">Cardinal Extension v2.1</h2>
-                    <p className="text-sm text-gray-400 leading-relaxed">Ультимативное решение для автоматизации ваших задач. Обновление уже доступно!</p>
+                    <p className="text-sm text-gray-400">Ультимативное решение для автоматизации ваших задач. Обновление уже доступно!</p>
                     <button className="w-full py-3 rounded-xl border border-[#d4af37]/50 bg-[#d4af37]/5 text-[#d4af37] font-bold text-sm">Перейти к покупке</button>
                 </div>
-
                 <div className="space-y-4">
                     <h3 className="text-lg font-bold tracking-wider uppercase text-gray-200">Спецпредложения</h3>
                     <div className="grid grid-cols-2 gap-4">
                         <div className="glass-card p-6 flex flex-col items-center text-center gap-3">
-                            <div className="p-3 rounded-full bg-[#d4af37]/10 text-[#d4af37]"><Icon name="crown" size={32} /></div>
+                            <Icon name="crown" size={32} className="text-[#d4af37]" />
                             <div className="font-bold text-sm">VIP Статус</div>
                             <div className="text-[#d4af37] font-bold">990 ₽</div>
                         </div>
                         <div className="glass-card p-6 flex flex-col items-center text-center gap-3">
-                            <div className="p-3 rounded-full bg-[#d4af37]/10 text-[#d4af37]"><Icon name="headphones" size={32} /></div>
+                            <Icon name="headphones" size={32} className="text-[#d4af37]" />
                             <div className="font-bold text-sm">Поддержка</div>
                             <div className="text-[#d4af37] font-bold">290 ₽</div>
                         </div>
@@ -103,10 +107,12 @@
             const [query, setQuery] = useState('');
             const items = [
                 { id: 1, name: 'Cardinal Ext', cat: 'Плагины', price: 499, desc: 'Лучший плагин', icon: 'shield' },
-                { id: 2, name: 'Spam Bot', cat: 'Боты', price: 750, desc: 'Для рассылок', icon: 'mail' },
-                { id: 3, name: 'Auto Script', cat: 'Скрипты', price: 300, desc: 'Python/JS', icon: 'code', full: true },
-                { id: 4, name: 'Telegram Bot', cat: 'Боты', price: 1200, desc: 'Универсальный бот', icon: 'message-circle' },
-                { id: 5, name: 'SEO Plugin', cat: 'Плагины', price: 550, desc: 'Для оптимизации', icon: 'layout-grid' },
+                { id: 2, name: 'Spam Bot', cat: 'Боты', price: 750, icon: 'mail' },
+                { id: 3, name: 'Auto Script', cat: 'Скрипты', price: 300, icon: 'code', full: true },
+                { id: 4, name: 'Telegram Bot', cat: 'Боты', price: 1200, icon: 'message-circle' },
+                { id: 5, name: 'SEO Plugin', cat: 'Плагины', price: 550, icon: 'layout-grid' },
+                { id: 6, name: 'Turbo Bot', cat: 'Боты', price: 2000, icon: 'zap' },
+                { id: 7, name: 'Web Scraper', cat: 'Скрипты', price: 800, icon: 'database' },
             ];
 
             const filtered = items.filter(i => (sel === 'Все товары' || i.cat === sel) && i.name.toLowerCase().includes(query.toLowerCase()));
@@ -150,6 +156,10 @@
                     <div className="glass-card p-5"><div className="text-[10px] text-gray-500 uppercase font-bold">Покупки</div><div className="text-2xl font-bold">0</div></div>
                     <div className="glass-card p-5"><div className="text-[10px] text-gray-500 uppercase font-bold">Баланс</div><div className="text-2xl font-bold">0 ₽</div></div>
                 </div>
+                <div className="glass-card p-5 space-y-4">
+                    <h4 className="text-sm font-bold gold-text uppercase tracking-widest">Информация</h4>
+                    <p className="text-xs text-gray-400">Здесь будет ваша статистика активности и статус лояльности в системе Prime Era.</p>
+                </div>
             </div>
         );
 
@@ -166,7 +176,7 @@
             </div>
         );
 
-        // --- Main App ---
+        // --- App ---
 
         function App() {
             const [tab, setTab] = useState('home');
@@ -181,25 +191,22 @@
                 }
             }, []);
 
-            const titles = { home: 'Prime Era', catalog: 'Магазин софта', profile: 'Профиль', chat: 'Чат' };
+            const titles = { home: 'Prime Era', catalog: 'Каталог', profile: 'Профиль', chat: 'Чат' };
 
             return (
-                <div className="min-h-screen overflow-y-auto no-scrollbar">
-                    {/* Background Glow */}
-                    <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full h-64 bg-[#d4af37]/5 blur-[100px] pointer-events-none" />
-                    
+                <div className="min-h-screen relative flex flex-col">
                     <header className="pt-8 pb-4 px-6 sticky top-0 bg-[#0a0a0a]/80 backdrop-blur-sm z-40 flex justify-center">
                         <h1 className="text-xl font-bold tracking-[0.2em] uppercase gold-text">{titles[tab]}</h1>
                     </header>
 
-                    <main className="relative z-10">
+                    <main className="flex-1 overflow-y-visible">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={tab}
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -10 }}
-                                transition={{ duration: 0.2 }}
+                                transition={{ duration: 0.15 }}
                             >
                                 {tab === 'home' && <HomeScreen />}
                                 {tab === 'catalog' && <CatalogScreen />}
@@ -209,17 +216,14 @@
                         </AnimatePresence>
                     </main>
 
-                    <nav className="fixed bottom-0 left-0 right-0 glass-card rounded-none border-t border-[rgba(212,175,55,0.3)] py-3 px-6 flex justify-between items-center z-50">
+                    <nav className="fixed bottom-0 left-0 right-0 bg-[#0a0a0a]/90 backdrop-blur-lg border-t border-[rgba(212,175,55,0.3)] py-3 px-6 flex justify-between items-center z-50">
                         {[
                             {id:'home', i:'home', l:'Главная'},
                             {id:'catalog', i:'layout-grid', l:'Каталог'},
                             {id:'profile', i:'user', l:'Профиль'},
                             {id:'chat', i:'message-circle', l:'Чат'}
                         ].map(t => (
-                            <button key={t.id} onClick={() => {
-                                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-                                setTab(t.id);
-                            }} className={`flex flex-col items-center gap-1 transition-all ${tab === t.id ? 'text-[#d4af37] scale-110' : 'text-gray-500'}`}>
+                            <button key={t.id} onClick={() => setTab(t.id)} className={`flex flex-col items-center gap-1 transition-all ${tab === t.id ? 'text-[#d4af37] scale-110' : 'text-gray-500'}`}>
                                 <Icon name={t.i} size={20} />
                                 <span className="text-[10px] uppercase tracking-wider font-medium">{t.l}</span>
                             </button>
