@@ -3,8 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Cardinal Prime Era | Full React</title>
+    <title>Cardinal Prime Era | Ultra Fixed</title>
 
+    <!-- Библиотеки -->
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
@@ -14,12 +15,9 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
     <style>
-        /* CSS Variables & Theme */
         :root {
             --gold: #d4af37;
             --gold-light: #f9e29c;
-            --dark-bg: #0a0a0a;
-            --card-bg: rgba(30, 30, 30, 0.6);
             --border-gold: rgba(212, 175, 55, 0.3);
         }
 
@@ -27,20 +25,19 @@
             background-color: #0a0a0a;
             color: white;
             margin: 0;
-            font-family: 'Inter', -apple-system, system-ui, sans-serif;
+            font-family: 'Inter', -apple-system, sans-serif;
             background-image: 
                 radial-gradient(circle at 50% -20%, rgba(212, 175, 55, 0.15), transparent 70%),
                 url('https://www.transparenttextures.com/patterns/dark-matter.png');
             background-attachment: fixed;
-            overflow-x: hidden;
+            overflow: hidden; /* Фикс для предотвращения прыжков при анимации */
         }
 
         .glass-card {
-            background: var(--card-bg);
+            background: rgba(30, 30, 30, 0.6);
             backdrop-filter: blur(12px);
             border: 1px solid var(--border-gold);
             border-radius: 1.5rem;
-            overflow: hidden;
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.8);
         }
 
@@ -64,170 +61,85 @@
 
     <script type="text/babel">
         const { useState, useEffect, useMemo } = React;
-        const { motion, AnimatePresence, LayoutGroup } = window.Motion;
+        const { motion, AnimatePresence } = window.Motion;
 
-        // --- Icon Wrapper ---
+        // --- Icon Component ---
         const Icon = ({ name, size = 20, className = "" }) => {
-            useEffect(() => { lucide.createIcons(); }, [name]);
+            useEffect(() => { if(window.lucide) lucide.createIcons(); }, [name]);
             return <i data-lucide={name} style={{width: size, height: size}} className={`lucide ${className}`}></i>;
         };
-
-        // --- Components ---
-
-        const BottomNav = ({ activeTab, setActiveTab }) => {
-            const tabs = [
-                { id: 'home', icon: 'home', label: 'Главная' },
-                { id: 'catalog', icon: 'layout-grid', label: 'Каталог' },
-                { id: 'profile', icon: 'user', label: 'Профиль' },
-                { id: 'chat', icon: 'message-circle', label: 'Чат' },
-            ];
-
-            return (
-                <nav className="fixed bottom-0 left-0 right-0 glass-card rounded-none border-t border-[rgba(212,175,55,0.3)] py-3 px-6 flex justify-between items-center z-50">
-                    {tabs.map((tab) => (
-                        <button
-                            key={tab.id}
-                            onClick={() => {
-                                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
-                                setActiveTab(tab.id);
-                            }}
-                            className={`flex flex-col items-center gap-1 transition-all duration-300 ${
-                                activeTab === tab.id ? 'text-[#d4af37] scale-110' : 'text-gray-500'
-                            }`}
-                        >
-                            <Icon name={tab.icon} size={20} className={activeTab === tab.id ? 'drop-shadow-[0_0_5px_rgba(212,175,55,0.5)]' : ''} />
-                            <span className="text-[10px] uppercase tracking-wider font-medium">{tab.label}</span>
-                        </button>
-                    ))}
-                </nav>
-            );
-        };
-
-        const Header = ({ title, showSearch }) => (
-            <header className="pt-8 pb-4 px-6 flex justify-between items-center sticky top-0 bg-[#0a0a0a]/80 backdrop-blur-sm z-40">
-                {showSearch ? <Icon name="search" size={24} className="text-[#d4af37]" /> : <div className="w-6" />}
-                <h1 className="text-xl font-bold tracking-[0.2em] uppercase gold-text mx-auto">{title}</h1>
-                {showSearch ? <div className="w-6" /> : <div className="w-6" />}
-            </header>
-        );
 
         // --- Screens ---
 
         const HomeScreen = () => (
-            <div className="px-6 pb-24 space-y-8">
+            <div className="px-6 pb-32 space-y-8">
                 <div className="glass-card p-6 space-y-4 relative overflow-hidden">
                     <div className="absolute top-0 right-0 w-32 h-32 bg-[#d4af37]/5 blur-3xl rounded-full -mr-16 -mt-16" />
                     <h2 className="text-2xl font-bold gold-text">Cardinal Extension v2.1</h2>
-                    <p className="text-sm text-gray-400 leading-relaxed">
-                        Ультимативное решение для автоматизации ваших задач. Обновление уже доступно!
-                    </p>
-                    <button className="w-full py-3 rounded-xl border border-[#d4af37]/50 bg-[#d4af37]/5 text-[#d4af37] font-bold text-sm hover:bg-[#d4af37]/10 transition-colors">
-                        Перейти к покупке
-                    </button>
+                    <p className="text-sm text-gray-400 leading-relaxed">Ультимативное решение для автоматизации ваших задач. Обновление уже доступно!</p>
+                    <button className="w-full py-3 rounded-xl border border-[#d4af37]/50 bg-[#d4af37]/5 text-[#d4af37] font-bold text-sm">Перейти к покупке</button>
                 </div>
 
                 <div className="space-y-4">
                     <h3 className="text-lg font-bold tracking-wider uppercase text-gray-200">Спецпредложения</h3>
                     <div className="grid grid-cols-2 gap-4">
-                        <div className="glass-card p-6 flex flex-col items-center text-center gap-3 group hover:border-[#d4af37]/60 transition-all">
-                            <div className="p-3 rounded-full bg-[#d4af37]/10 text-[#d4af37] group-hover:scale-110 transition-transform">
-                                <Icon name="crown" size={32} />
-                            </div>
-                            <div>
-                                <div className="font-bold text-sm">VIP Статус</div>
-                                <div className="text-[10px] text-gray-500 uppercase">Навсегда</div>
-                            </div>
+                        <div className="glass-card p-6 flex flex-col items-center text-center gap-3">
+                            <div className="p-3 rounded-full bg-[#d4af37]/10 text-[#d4af37]"><Icon name="crown" size={32} /></div>
+                            <div className="font-bold text-sm">VIP Статус</div>
                             <div className="text-[#d4af37] font-bold">990 ₽</div>
                         </div>
-                        <div className="glass-card p-6 flex flex-col items-center text-center gap-3 group hover:border-[#d4af37]/60 transition-all">
-                            <div className="p-3 rounded-full bg-[#d4af37]/10 text-[#d4af37] group-hover:scale-110 transition-transform">
-                                <Icon name="headphones" size={32} />
-                            </div>
-                            <div>
-                                <div className="font-bold text-sm">Поддержка</div>
-                                <div className="text-[10px] text-gray-500 uppercase">Приоритет</div>
-                            </div>
+                        <div className="glass-card p-6 flex flex-col items-center text-center gap-3">
+                            <div className="p-3 rounded-full bg-[#d4af37]/10 text-[#d4af37]"><Icon name="headphones" size={32} /></div>
+                            <div className="font-bold text-sm">Поддержка</div>
                             <div className="text-[#d4af37] font-bold">290 ₽</div>
                         </div>
                     </div>
                 </div>
-                <div className="text-center text-[10px] text-gray-600 tracking-widest uppercase pb-4">@sellpip_bot</div>
             </div>
         );
 
         const CatalogScreen = () => {
-            const [selectedCategory, setSelectedCategory] = useState('Все товары');
-            const [searchQuery, setSearchQuery] = useState('');
-            const categories = ['Все товары', 'Боты', 'Плагины', 'Скрипты'];
-
+            const [sel, setSel] = useState('Все товары');
+            const [query, setQuery] = useState('');
             const items = [
-                { id: 1, name: 'Cardinal Ext', category: 'Плагины', price: 499, description: 'Лучший плагин', icon: 'shield' },
-                { id: 2, name: 'Spam Bot', category: 'Боты', price: 750, description: 'Для рассылок', icon: 'mail' },
-                { id: 3, name: 'Auto Script', category: 'Скрипты', price: 300, description: 'Python/JS', icon: 'code', fullWidth: true },
-                { id: 4, name: 'Telegram Bot', category: 'Боты', price: 1200, description: 'Универсальный бот', icon: 'message-circle' },
-                { id: 5, name: 'SEO Plugin', category: 'Плагины', price: 550, description: 'Для оптимизации', icon: 'layout-grid' },
+                { id: 1, name: 'Cardinal Ext', cat: 'Плагины', price: 499, desc: 'Лучший плагин', icon: 'shield' },
+                { id: 2, name: 'Spam Bot', cat: 'Боты', price: 750, desc: 'Для рассылок', icon: 'mail' },
+                { id: 3, name: 'Auto Script', cat: 'Скрипты', price: 300, desc: 'Python/JS', icon: 'code', full: true },
+                { id: 4, name: 'Telegram Bot', cat: 'Боты', price: 1200, desc: 'Универсальный бот', icon: 'message-circle' },
+                { id: 5, name: 'SEO Plugin', cat: 'Плагины', price: 550, desc: 'Для оптимизации', icon: 'layout-grid' },
             ];
 
-            const filteredItems = items.filter(item => {
-                const matchesCategory = selectedCategory === 'Все товары' || item.category === selectedCategory;
-                const matchesSearch = item.name.toLowerCase().includes(searchQuery.toLowerCase());
-                return matchesCategory && matchesSearch;
-            });
+            const filtered = items.filter(i => (sel === 'Все товары' || i.cat === sel) && i.name.toLowerCase().includes(query.toLowerCase()));
 
             return (
-                <div className="px-6 pb-24 space-y-6">
+                <div className="px-6 pb-32 space-y-6">
                     <div className="relative">
                         <Icon name="search" size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500" />
-                        <input 
-                            type="text" placeholder="Поиск по названию..." 
-                            value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)}
-                            className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-sm focus:outline-none focus:border-[#d4af37]/50 transition-colors"
-                        />
+                        <input type="text" placeholder="Поиск..." value={query} onChange={e => setQuery(e.target.value)} className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-12 pr-4 text-sm outline-none focus:border-[#d4af37]/50" />
                     </div>
-
-                    <div className="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
-                        {categories.map((cat) => (
-                            <button 
-                                key={cat} 
-                                onClick={() => setSelectedCategory(cat)}
-                                className={`px-4 py-2 rounded-full text-xs font-medium whitespace-nowrap border transition-all ${
-                                    selectedCategory === cat ? 'bg-[#d4af37]/10 border-[#d4af37] text-[#d4af37]' : 'bg-white/5 border-white/10 text-gray-400'
-                                }`}
-                            >
-                                {cat}
-                            </button>
+                    <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+                        {['Все товары', 'Боты', 'Плагины', 'Скрипты'].map(c => (
+                            <button key={c} onClick={() => setSel(c)} className={`px-4 py-2 rounded-full text-xs whitespace-nowrap border transition-all ${sel === c ? 'bg-[#d4af37]/10 border-[#d4af37] text-[#d4af37]' : 'border-white/10 text-gray-400'}`}>{c}</button>
                         ))}
                     </div>
-
                     <div className="grid grid-cols-2 gap-4">
-                        <AnimatePresence mode="popLayout">
-                            {filteredItems.map((item) => (
-                                <motion.div 
-                                    key={item.id} layout
-                                    initial={{ opacity: 0, scale: 0.9 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.9 }}
-                                    className={`glass-card p-4 flex flex-col items-center text-center gap-3 ${item.fullWidth ? 'col-span-2' : ''}`}
-                                >
-                                    <div className="p-3 rounded-xl bg-[#d4af37]/5 text-[#d4af37]"><Icon name={item.icon} size={28} /></div>
-                                    <div>
-                                        <div className="font-bold text-sm">{item.name}</div>
-                                        <div className="text-[10px] text-gray-500">{item.description}</div>
-                                    </div>
-                                    <div className="text-[#d4af37] font-bold">{item.price} ₽</div>
-                                </motion.div>
-                            ))}
-                        </AnimatePresence>
+                        {filtered.map(i => (
+                            <div key={i.id} className={`glass-card p-4 flex flex-col items-center gap-3 ${i.full ? 'col-span-2' : ''}`}>
+                                <div className="p-3 rounded-xl bg-[#d4af37]/5 text-[#d4af37]"><Icon name={i.icon} size={28} /></div>
+                                <div className="text-center"><div className="font-bold text-sm">{i.name}</div><div className="text-[10px] text-gray-500">{i.desc}</div></div>
+                                <div className="text-[#d4af37] font-bold">{i.price} ₽</div>
+                            </div>
+                        ))}
                     </div>
                 </div>
             );
         };
 
         const ProfileScreen = ({ user }) => (
-            <div className="px-6 pb-24 space-y-8">
+            <div className="px-6 pb-32 space-y-8">
                 <div className="flex flex-col items-center gap-4 py-4">
                     <div className="w-24 h-24 rounded-3xl overflow-hidden border-2 border-[#d4af37]/30 p-1">
-                        <img src={user?.photo_url || "https://picsum.photos/seed/user/200"} alt="Avatar" className="w-full h-full object-cover rounded-2xl" />
+                        <img src={user?.photo_url || "https://picsum.photos/seed/user/200"} className="w-full h-full object-cover rounded-2xl" />
                     </div>
                     <div className="text-center">
                         <div className="text-xl font-bold gold-text">{user?.first_name || "Кирюша"}</div>
@@ -235,34 +147,21 @@
                     </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
-                    <div className="glass-card p-5 space-y-1">
-                        <div className="text-[10px] text-gray-500 uppercase font-bold">Покупки</div>
-                        <div className="text-2xl font-bold">0</div>
-                    </div>
-                    <div className="glass-card p-5 space-y-1">
-                        <div className="text-[10px] text-gray-500 uppercase font-bold">Баланс</div>
-                        <div className="text-2xl font-bold">0 ₽</div>
-                    </div>
+                    <div className="glass-card p-5"><div className="text-[10px] text-gray-500 uppercase font-bold">Покупки</div><div className="text-2xl font-bold">0</div></div>
+                    <div className="glass-card p-5"><div className="text-[10px] text-gray-500 uppercase font-bold">Баланс</div><div className="text-2xl font-bold">0 ₽</div></div>
                 </div>
             </div>
         );
 
         const ChatScreen = () => (
-            <div className="flex flex-col h-[calc(100vh-180px)] px-6">
+            <div className="flex flex-col h-[70vh] px-6">
                 <div className="flex-1 flex flex-col items-center justify-center gap-8">
-                    <div className="relative">
-                        <div className="absolute inset-0 bg-[#d4af37]/20 blur-3xl rounded-full" />
-                        <img src="https://img.freepik.com/free-vector/robot-with-headphones-listening-music_23-2148505537.jpg" alt="Bot" className="w-48 h-48 object-contain relative z-10 drop-shadow-[0_0_20px_rgba(212,175,55,0.3)]" />
-                    </div>
-                    <div className="glass-card p-4 max-w-[80%] relative">
-                        <p className="text-sm font-medium">Чем могу помочь?</p>
-                    </div>
+                    <img src="https://img.freepik.com/free-vector/robot-with-headphones-listening-music_23-2148505537.jpg" className="w-48 h-48 object-contain drop-shadow-[0_0_20px_rgba(212,175,55,0.3)]" />
+                    <div className="glass-card p-4"><p className="text-sm font-medium">Чем могу помочь?</p></div>
                 </div>
-                <div className="pb-4 space-y-4">
-                    <div className="relative flex items-center gap-2">
-                        <input type="text" placeholder="Введите сообщение..." className="w-full bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-sm outline-none focus:border-[#d4af37]/50" />
-                        <button className="p-4 rounded-xl bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37]"><Icon name="send" size={20} /></button>
-                    </div>
+                <div className="flex items-center gap-2">
+                    <input type="text" placeholder="Введите сообщение..." className="flex-1 bg-white/5 border border-white/10 rounded-xl py-4 px-6 text-sm outline-none" />
+                    <button className="p-4 rounded-xl bg-[#d4af37]/10 border border-[#d4af37]/30 text-[#d4af37]"><Icon name="send" size={20} /></button>
                 </div>
             </div>
         );
@@ -270,52 +169,62 @@
         // --- Main App ---
 
         function App() {
-            const [activeTab, setActiveTab] = useState('home');
-            const [userData, setUserData] = useState(null);
+            const [tab, setTab] = useState('home');
+            const [user, setUser] = useState(null);
 
             useEffect(() => {
                 if (window.Telegram?.WebApp) {
                     const tg = window.Telegram.WebApp;
                     tg.ready(); tg.expand();
                     tg.setHeaderColor('#0a0a0a');
-                    setUserData(tg.initDataUnsafe?.user);
+                    setUser(tg.initDataUnsafe?.user);
                 }
             }, []);
 
-            const getTitle = () => {
-                switch(activeTab) {
-                    case 'home': return 'Prime Era';
-                    case 'catalog': return 'Магазин софта';
-                    case 'profile': return 'Профиль';
-                    case 'chat': return 'Чат';
-                    default: return 'Prime Era';
-                }
-            };
+            const titles = { home: 'Prime Era', catalog: 'Магазин софта', profile: 'Профиль', chat: 'Чат' };
 
             return (
-                <div className="min-h-screen relative overflow-x-hidden">
-                    <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full h-64 bg-[#d4af37]/5 blur-[100px] pointer-events-none z-0" />
+                <div className="min-h-screen overflow-y-auto no-scrollbar">
+                    {/* Background Glow */}
+                    <div className="fixed top-0 left-1/2 -translate-x-1/2 w-full h-64 bg-[#d4af37]/5 blur-[100px] pointer-events-none" />
                     
-                    <Header title={getTitle()} showSearch={activeTab === 'catalog'} />
+                    <header className="pt-8 pb-4 px-6 sticky top-0 bg-[#0a0a0a]/80 backdrop-blur-sm z-40 flex justify-center">
+                        <h1 className="text-xl font-bold tracking-[0.2em] uppercase gold-text">{titles[tab]}</h1>
+                    </header>
 
                     <main className="relative z-10">
                         <AnimatePresence mode="wait">
                             <motion.div
-                                key={activeTab}
+                                key={tab}
                                 initial={{ opacity: 0, y: 10 }}
                                 animate={{ opacity: 1, y: 0 }}
                                 exit={{ opacity: 0, y: -10 }}
                                 transition={{ duration: 0.2 }}
                             >
-                                {activeTab === 'home' && <HomeScreen />}
-                                {activeTab === 'catalog' && <CatalogScreen />}
-                                {activeTab === 'profile' && <ProfileScreen user={userData} />}
-                                {activeTab === 'chat' && <ChatScreen />}
+                                {tab === 'home' && <HomeScreen />}
+                                {tab === 'catalog' && <CatalogScreen />}
+                                {tab === 'profile' && <ProfileScreen user={user} />}
+                                {tab === 'chat' && <ChatScreen />}
                             </motion.div>
                         </AnimatePresence>
                     </main>
 
-                    <BottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+                    <nav className="fixed bottom-0 left-0 right-0 glass-card rounded-none border-t border-[rgba(212,175,55,0.3)] py-3 px-6 flex justify-between items-center z-50">
+                        {[
+                            {id:'home', i:'home', l:'Главная'},
+                            {id:'catalog', i:'layout-grid', l:'Каталог'},
+                            {id:'profile', i:'user', l:'Профиль'},
+                            {id:'chat', i:'message-circle', l:'Чат'}
+                        ].map(t => (
+                            <button key={t.id} onClick={() => {
+                                window.Telegram.WebApp.HapticFeedback.impactOccurred('light');
+                                setTab(t.id);
+                            }} className={`flex flex-col items-center gap-1 transition-all ${tab === t.id ? 'text-[#d4af37] scale-110' : 'text-gray-500'}`}>
+                                <Icon name={t.i} size={20} />
+                                <span className="text-[10px] uppercase tracking-wider font-medium">{t.l}</span>
+                            </button>
+                        ))}
+                    </nav>
                 </div>
             );
         }
